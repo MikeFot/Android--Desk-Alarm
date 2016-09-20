@@ -17,8 +17,7 @@ import com.michaelfotiadis.deskalarm.managers.ErgoServiceManager;
 import com.michaelfotiadis.deskalarm.utils.AppUtils;
 import com.michaelfotiadis.deskalarm.utils.Logger;
 
-public class ErgoPreferencesActivity extends PreferenceActivity implements
-        OnSharedPreferenceChangeListener {
+public class ErgoPreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
     private final String TAG = "SettingsActivity";
 

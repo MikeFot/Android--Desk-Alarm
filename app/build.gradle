@@ -1,10 +1,16 @@
 apply plugin: 'com.android.application'
 
+final def STRING = "string"
+final def BOOLEAN = "boolean"
+final def INT = "int"
+
 final String appCompatLibVersion = "24.2.1"
 
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
+    useLibrary 'org.apache.http.legacy'
+
 
     defaultConfig {
         applicationId "com.michaelfotiadis.deskalarm"
@@ -15,9 +21,41 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            buildConfigField BOOLEAN, "DEV_MODE", "false"
+        }
+        debug {
+            minifyEnabled false
+            buildConfigField BOOLEAN, "DEV_MODE", "true"
         }
     }
+
+    productFlavors {
+        prod {
+            applicationId "com.michaelfotiadis.deskalarm"
+            resValue(STRING, "app_name", "Office Health Alarm")
+        }
+
+        dev {
+            applicationId "com.michaelfotiadis.deskalarm.dev"
+            resValue(STRING, "app_name", "Office Health Alarm Debug")
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
 }
 
 dependencies {
