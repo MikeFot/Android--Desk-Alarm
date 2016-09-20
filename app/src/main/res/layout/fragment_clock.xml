@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/padding"
+                android:orientation="vertical">
+
+    <com.michaelfotiadis.deskalarm.views.ErgoAnalogClock
+        android:id="@+id/analogClock"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+    <com.michaelfotiadis.deskalarm.views.ErgoFusionClock
+        android:id="@+id/fusionClock"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+    <com.michaelfotiadis.deskalarm.views.ErgoDigitalClock
+        android:id="@+id/digitalClock"
+        style="@style/DigitalClockTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+</RelativeLayout>

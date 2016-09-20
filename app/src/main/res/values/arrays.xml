@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="array_viewpager_titles">
+        <item>@string/title_clock</item>
+        <item>@string/title_graph</item>
+    </string-array>
+    <string-array name="array_clock_types">
+        <item>@string/clock_analogue</item>
+        <item>@string/clock_fusion</item>
+        <item>@string/clock_digital</item>
+    </string-array>
+    <string-array name="array_notification_types">
+        <item>@string/notif_app</item>
+        <item>@string/notif_system</item>
+    </string-array>
+    <string-array name="array_theme">
+        <item>@string/theme_dark</item>
+        <item>@string/theme_light</item>
+    </string-array>
+
+    <array name="array_sensor_modes">
+        <item>@string/sensor_mode_a</item>
+        <item>@string/sensor_mode_b</item>
+        <item>@string/sensor_mode_c</item>
+    </array>
+    <array name="array_fonts">
+        <item>@string/font_a_name</item>
+        <item>@string/font_b_name</item>
+        <item>@string/font_c_name</item>
+    </array>
+    <array name="array_fonts_values">
+        <item>@string/font_a</item>
+        <item>@string/font_b</item>
+        <item>@string/font_c</item>
+    </array>
+    <array name="array_color_font_values">
+        <item>@string/holo_value_blue_bright</item>
+        <item>@string/holo_value_blue_dark</item>
+        <item>@string/holo_value_blue_light</item>
+        <item>@string/holo_value_gray_light</item>
+        <item>@string/holo_value_green_dark</item>
+        <item>@string/holo_value_green_light</item>
+        <item>@string/holo_value_orange_dark</item>
+        <item>@string/holo_value_orange_light</item>
+        <item>@string/holo_value_purple</item>
+        <item>@string/holo_value_red_dark</item>
+        <item>@string/holo_value_red_light</item>
+    </array>
+    <array name="array_color_font_names">
+        <item>@string/holo_blue_bright</item>
+        <item>@string/holo_blue_dark</item>
+        <item>@string/holo_blue_light</item>
+        <item>@string/holo_gray_light</item>
+        <item>@string/holo_green_dark</item>
+        <item>@string/holo_green_light</item>
+        <item>@string/holo_orange_dark</item>
+        <item>@string/holo_orange_light</item>
+        <item>@string/holo_purple</item>
+        <item>@string/holo_red_dark</item>
+        <item>@string/holo_red_light</item>
+    </array>
+    <array name="array_ringtone_values">
+        <item>@string/ringtone_value_1</item>
+        <item>@string/ringtone_value_2</item>
+        <item>@string/ringtone_value_3</item>
+        <item>@string/ringtone_value_4</item>
+        <item>@string/ringtone_value_5</item>
+        <item>@string/ringtone_value_6</item>
+        <item>@string/ringtone_value_7</item>
+        <item>""</item>
+    </array>
+    <array name="array_ringtone_names">
+        <item>@string/ringtone_name_1</item>
+        <item>@string/ringtone_name_2</item>
+        <item>@string/ringtone_name_3</item>
+        <item>@string/ringtone_name_4</item>
+        <item>@string/ringtone_name_5</item>
+        <item>@string/ringtone_name_6</item>
+        <item>@string/ringtone_name_7</item>
+        <item>@string/ringtone_name_None</item>
+    </array>
+
+</resources>

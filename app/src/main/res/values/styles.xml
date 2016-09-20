@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+         Base application theme, dependent on API level. This theme is replaced 
+		by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat">
+        <!--
+             Theme customizations available in newer API levels can go in res/values-vXX/styles.xml, 
+			while customizations related to backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <item name="android:actionBarStyle">@style/ActionBarDark</item>
+        <item name="theme_dependent_icon">@drawable/ic_action_settings_light</item>
+        <item name="theme_dependent_layout_color">@color/background_holo_dark</item>
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppLightTheme" parent="Theme.AppCompat.Light">
+        <item name="android:actionBarStyle">@style/ActionBarLight</item>
+        <item name="theme_dependent_icon">@drawable/ic_action_settings_dark</item>
+        <item name="theme_dependent_layout_color">@color/background_holo_light</item>
+    </style>
+
+    <style name="ActionBarDark" parent="android:Widget.Holo.Light.ActionBar">
+        <!-- <item name="android:background">@color/holo_green_dark</item> -->
+    </style>
+
+    <style name="ActionBarLight" parent="android:Widget.Holo.Light.ActionBar">
+        <!-- <item name="android:background">@color/holo_orange_dark</item> -->
+    </style>
+
+    <style name="DigitalClockTextView" parent="android:Widget.Holo.Light.TextView">
+        <item name="android:textSize">30sp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ellipsize">none</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:scrollHorizontally">false</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+</resources>

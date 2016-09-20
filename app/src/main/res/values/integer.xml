@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="time_to_alarm">15</integer>
+    <integer name="time_to_snooze">1</integer>
+
+</resources>
