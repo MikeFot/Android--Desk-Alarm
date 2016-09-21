@@ -9,29 +9,23 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.michaelfotiadis.deskalarm.R;
+import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.containers.ErgoClockInstance;
-import com.michaelfotiadis.deskalarm.utils.AppUtils;
-import com.michaelfotiadis.deskalarm.utils.Logger;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.util.Calendar;
 
 public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
 
-    private final String TAG = "My Digital Clock";
-
-    private final String TIME_ZERO_VALUE = "00:00:00";
-
-    private long mStartTime = 0;
-
-    private int prefFontSize = 12;
-
-    private ErgoClockInstance mClockInstance;
-
+    private static final String TIME_ZERO_VALUE = "00:00:00";
+    private static final long _updateInterval = 1000;
     private final Handler mHandler = new Handler();
-
-    private final long _updateInterval = 1000;
-
+    private final PreferenceHandler mPreferenceHandler;
+    private long mStartTime = 0;
+    private int mPrefFontSize = 12;
+    private final ErgoClockInstance mClockInstance;
+    private long mTimeRunning;
     private final Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
@@ -40,94 +34,44 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
         }
     };
 
-    public ErgoDigitalClock(Context context) {
+    public ErgoDigitalClock(final Context context) {
         super(context);
         mClockInstance = new ErgoClockInstance();
+        mPreferenceHandler = new PreferenceHandler(context);
     }
 
-    public ErgoDigitalClock(Context context, AttributeSet attrs) {
+    public ErgoDigitalClock(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        init(attrs);
         mClockInstance = new ErgoClockInstance();
+        mPreferenceHandler = new PreferenceHandler(context);
+        init(attrs);
+
 
     }
 
-    public ErgoDigitalClock(Context context, AttributeSet attrs, int defStyle) {
+    public ErgoDigitalClock(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs);
         mClockInstance = new ErgoClockInstance();
-    }
-
-    private void init(AttributeSet attrs) {
-        prefFontSize = (int) getResources().getDimension(R.dimen.digital_clock_font_size);
-
-        String fontName = new AppUtils().getAppSharedPreferences(getContext()).getString(
-                getContext().getString(R.string.pref_font_key),
-                getContext().getString(R.string.pref_font_default_value));
-        Typeface typeface = Typeface.createFromAsset(getContext().getAssets(),
-                "fonts/" + fontName);
-        try {
-            setTypeface(typeface);
-        } catch (Exception e1) {
-            Logger.e(TAG, "Error encountered while settng font Typeface: ", e1);
-        }
-
-
-        setTextSize(prefFontSize);
-
-		/* This commented section contains code for handling Attributes */
-		/*
-		if (attrs!=null) {
-			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.DigitalClock);
-
-			final int N = a.getIndexCount();
-			for (int i = 0; i < N; ++i)
-			{
-				int attr = a.getIndex(i);
-				switch (attr)
-				{
-				case R.styleable.DigitalClock_fontName:
-					fontName = a.getString(attr);
-					if (fontName != null) {
-						Logger.i(TAG, "USING FONT " + fontName);
-						typeface = Typeface.createFromAsset(getContext().getAssets(),
-								"fonts/" + fontName);
-						setTypeface(typeface);
-						setTextSize(prefFontSize);
-					}
-					break;
-				default:
-					break;
-				}
-			}
-			a.recycle();
-		}
-		*/
-
-        String fontColour = new AppUtils().getAppSharedPreferences(getContext()).getString(
-                getContext().getString(R.string.pref_font_color_key),
-                getContext().getString(R.string.pref_font_color_default_value));
-        try {
-            this.setTextColor(Color.parseColor(fontColour));
-        } catch (Exception e) {
-            Logger.e(TAG, "Error encountered while settng font Color: ", e);
-        }
-
-        // set the time initially to 00:00:00
-        this.setText(TIME_ZERO_VALUE);
+        mPreferenceHandler = new PreferenceHandler(context);
+        init(attrs);
     }
 
     @Override
-    public boolean isVisible() {
-        if (this.getVisibility() == View.VISIBLE) {
-            return true;
-        }
-        return false;
-    }
+    public void updateTime() {
+        setTimeRunning((Calendar.getInstance().getTimeInMillis() -
+                mStartTime) / 1000);
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
+        if (mStartTime == 0) {
+            mClockInstance.reset();
+            this.setText(TIME_ZERO_VALUE);
+            return;
+        }
+
+        final int[] timeIntArray = PrimitiveConversions.getIntTimeArrayFromSeconds(getTimeRunning());
+        mClockInstance.setTime(timeIntArray[0], timeIntArray[1], timeIntArray[2]);
+
+        this.setText(mClockInstance.getString());
+        invalidate();
     }
 
     @Override
@@ -157,24 +101,12 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
         mHandler.removeCallbacks(mRunnable);
     }
 
-    private long mTimeRunning;
-
     @Override
-    public void updateTime() {
-        setTimeRunning((Calendar.getInstance().getTimeInMillis() -
-                mStartTime) / 1000);
-
-        if (mStartTime == 0) {
-            mClockInstance.reset();
-            this.setText(TIME_ZERO_VALUE);
-            return;
+    public boolean isVisible() {
+        if (this.getVisibility() == View.VISIBLE) {
+            return true;
         }
-
-        int[] timeIntArray = PrimitiveConversions.getIntTimeArrayFromSeconds(getTimeRunning());
-        mClockInstance.setTime(timeIntArray[0], timeIntArray[1], timeIntArray[2]);
-
-        this.setText(mClockInstance.getString());
-        invalidate();
+        return false;
     }
 
     @Override
@@ -182,12 +114,12 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
         return mTimeRunning;
     }
 
-    private void setTimeRunning(long timeRunning) {
+    private void setTimeRunning(final long timeRunning) {
         this.mTimeRunning = timeRunning;
     }
 
     @Override
-    public void setMinutesToAlarm(int minutesToAlarm) {
+    public void setMinutesToAlarm(final int minutesToAlarm) {
         // TODO Auto-generated method stub
 
     }
@@ -196,5 +128,69 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
     public void setSystemTime() {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+    }
+
+    private void init(final AttributeSet attrs) {
+        mPrefFontSize = (int) getResources().getDimension(R.dimen.digital_clock_font_size);
+
+        final String fontName = mPreferenceHandler.getAppSharedPreferences().getString(
+                getContext().getString(R.string.pref_font_key),
+                getContext().getString(R.string.pref_font_default_value));
+        final Typeface typeface = Typeface.createFromAsset(getContext().getAssets(),
+                "fonts/" + fontName);
+        try {
+            setTypeface(typeface);
+        } catch (final Exception e1) {
+            AppLog.e("Error encountered while setting font Typeface: ", e1);
+        }
+
+
+        setTextSize(mPrefFontSize);
+
+		/* This commented section contains code for handling Attributes */
+        /*
+        if (attrs!=null) {
+			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.DigitalClock);
+
+			final int N = a.getIndexCount();
+			for (int i = 0; i < N; ++i)
+			{
+				int attr = a.getIndex(i);
+				switch (attr)
+				{
+				case R.styleable.DigitalClock_fontName:
+					fontName = a.getString(attr);
+					if (fontName != null) {
+						Logger.i(TAG, "USING FONT " + fontName);
+						typeface = Typeface.createFromAsset(getContext().getAssets(),
+								"fonts/" + fontName);
+						setTypeface(typeface);
+						setTextSize(mPrefFontSize);
+					}
+					break;
+				default:
+					break;
+				}
+			}
+			a.recycle();
+		}
+		*/
+
+        final String fontColour = mPreferenceHandler.getAppSharedPreferences().getString(
+                getContext().getString(R.string.pref_font_color_key),
+                getContext().getString(R.string.pref_font_color_default_value));
+        try {
+            this.setTextColor(Color.parseColor(fontColour));
+        } catch (final Exception e) {
+            AppLog.e("Error encountered while settng font Color: ", e);
+        }
+
+        // set the time initially to 00:00:00
+        this.setText(TIME_ZERO_VALUE);
     }
 }

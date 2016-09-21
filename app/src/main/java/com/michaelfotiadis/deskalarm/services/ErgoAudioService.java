@@ -7,26 +7,28 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.utils.AppUtils;
-import com.michaelfotiadis.deskalarm.utils.Logger;
+import com.michaelfotiadis.deskalarm.common.base.core.Core;
+import com.michaelfotiadis.deskalarm.common.base.core.CoreProvider;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class ErgoAudioService extends IntentService {
 
-    private final String TAG = "ErgoAudioService";
+    private final Core mCore;
 
     public ErgoAudioService() {
         super("ErgoAudioService");
+        mCore = new CoreProvider(this);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        String preference = new AppUtils().getAppSharedPreferences(getApplicationContext()).getString(
+    protected void onHandleIntent(final Intent intent) {
+        final String preference = mCore.getPreferenceHandler().getAppSharedPreferences().getString(
                 getString(R.string.pref_ringtones_key),
                 getString(R.string.pref_ringtones_default));
         if (preference.length() < 1) {
             this.stopSelf();
         }
-        int resID = getApplicationContext().getResources().getIdentifier(
+        final int resID = getApplicationContext().getResources().getIdentifier(
                 preference, "raw", getApplicationContext().getPackageName());
         if (resID == 0) {
             this.stopSelf();
@@ -36,12 +38,11 @@ public class ErgoAudioService extends IntentService {
             final AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
             if (audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION) != 0) {
-                MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), resID);
-                // TODO getting an orange message!!!
+                final MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), resID);
                 mediaPlayer.start();
             }
-        } catch (Exception e) {
-            Logger.e(TAG, "Exception while playing Audio:", e);
+        } catch (final Exception e) {
+            AppLog.d(String.format("Exception while playing Audio:%s", e));
         }
     }
 

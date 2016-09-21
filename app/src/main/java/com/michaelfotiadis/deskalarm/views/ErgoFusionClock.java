@@ -11,11 +11,11 @@ import android.view.View;
 import android.widget.RemoteViews.RemoteView;
 
 import com.michaelfotiadis.deskalarm.R;
+import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.containers.ErgoClockInstance;
-import com.michaelfotiadis.deskalarm.utils.AppUtils;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
-import com.michaelfotiadis.deskalarm.utils.Logger;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.util.Calendar;
 
@@ -26,60 +26,51 @@ import java.util.Calendar;
 @RemoteView
 public class ErgoFusionClock extends View implements ErgoClockInterface {
 
-    private final long HANDLER_UPDATE_INTERVAL = 10;
-
+    private final PreferenceHandler mPreferenceHandler;
+    private final Handler mHandler = new Handler();
     private Drawable mHourHand;
     private Drawable mMinuteHand;
     private Drawable mSecondHand;
     private Drawable mDial;
     private Drawable mAlarmHandMinutes;
     private Drawable mAlarmHandHours;
-
     private int mDialWidth;
     private int mDialHeight;
-
     private boolean mChanged;
-
     private boolean isClockRunning;
-
     // overlay color for color filter - set from preferences
     private int mOverlayColor;
     private int mLighterOverlayColor;
     private int mShiftedOverlayColor;
-
     private int mInterval;
-
-    private final Handler mHandler = new Handler();
-
-    private final String TAG = "My Fusion Clock";
-
+    private long mTimeRunning;
+    private ErgoClockInstance mClockInstance = new ErgoClockInstance();
+    private long mStartTime = 0;
     private final Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
+            final long HANDLER_UPDATE_INTERVAL = 10;
             mHandler.postDelayed(this, HANDLER_UPDATE_INTERVAL);
 
             updateTime();
         }
     };
+    private float rotation = 0;
 
-    private long mTimeRunning;
-
-    private ErgoClockInstance mClockInstance = new ErgoClockInstance();
-
-    private long mStartTime = 0;
-
-    public ErgoFusionClock(Context context) {
+    public ErgoFusionClock(final Context context) {
         super(context);
+        mPreferenceHandler = new PreferenceHandler(context);
     }
 
-    public ErgoFusionClock(Context context, AttributeSet attrs) {
+    public ErgoFusionClock(final Context context, final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    private ErgoFusionClock(Context context, AttributeSet attrs,
-                            int defStyle) {
+    private ErgoFusionClock(final Context context, final AttributeSet attrs,
+                            final int defStyle) {
         super(context, attrs, defStyle);
-        Resources resources = context.getResources();
+        mPreferenceHandler = new PreferenceHandler(context);
+        final Resources resources = context.getResources();
         mDial = resources.getDrawable(R.drawable.clock_fusion_dial_r_three);
         mHourHand = resources.getDrawable(R.drawable.clock_fusion_hour_hand);
         mMinuteHand = resources.getDrawable(R.drawable.clock_fusion_hand_minutes);
@@ -90,14 +81,69 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
         mDialWidth = mDial.getIntrinsicWidth();
         mDialHeight = mDial.getIntrinsicHeight();
 
-        String hexColour = new AppUtils().getAppSharedPreferences(getContext()).getString(
+        final String hexColour = mPreferenceHandler.getAppSharedPreferences().getString(
                 getContext().getString(R.string.pref_font_color_key),
                 getContext().getString(R.string.pref_font_color_default_value));
         mOverlayColor = Color.parseColor(hexColour);
 
-        mLighterOverlayColor = new ColorUtils().getLighterColor(mOverlayColor);
-        mShiftedOverlayColor = new ColorUtils().getRightBitShiftedColor(mOverlayColor);
+        mLighterOverlayColor = ColorUtils.getLighterColor(mOverlayColor);
+        mShiftedOverlayColor = ColorUtils.getRightBitShiftedColor(mOverlayColor);
 
+    }
+
+    /**
+     * Method to process Handler ticks
+     */
+    @Override
+    public void updateTime() {
+        setTimeRunning((Calendar.getInstance().getTimeInMillis() -
+                mStartTime) / 1000);
+        if (mStartTime == 0) {
+            mClockInstance.reset();
+            invalidate();
+            return;
+        }
+        final float[] timeIntArray = PrimitiveConversions.getHourFloatTimeArrayFromSeconds(getTimeRunning());
+
+        mClockInstance.setTime(timeIntArray[0], timeIntArray[1], timeIntArray[2]);
+
+        mChanged = true;
+        invalidate();
+    }
+
+    @Override
+    public void pauseClock() {
+        mHandler.removeCallbacks(mRunnable);
+    }
+
+    @Override
+    public void setTime(final int hours, final int minutes, final int seconds) {
+        //		Logger.d(TAG, "Setting time to " + hours + " " + minutes + " " + seconds);
+        mClockInstance.setSeconds(6.0f * seconds);
+        mClockInstance.setMinutes(minutes + seconds / 60.0f);
+        mClockInstance.setHour(hours + minutes / 60.0f);
+        invalidate();
+    }
+
+    @Override
+    public void startClock(final long startTime, final int minutesToAlarm) {
+        mStartTime = startTime;
+        mInterval = minutesToAlarm;
+        isClockRunning = true;
+        mHandler.post(mRunnable);
+    }
+
+    @Override
+    public void stopClock() {
+        isClockRunning = false;
+        mClockInstance.reset();
+        invalidate();
+        mHandler.removeCallbacks(mRunnable);
+    }
+
+    @Override
+    public boolean isVisible() {
+        return this.getVisibility() == View.VISIBLE;
     }
 
     @Override
@@ -105,42 +151,36 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
         return mTimeRunning;
     }
 
-    @Override
-    public boolean isVisible() {
-        if (this.getVisibility() == View.VISIBLE) {
-            return true;
-        }
-        return false;
+    private void setTimeRunning(final long timeRunning) {
+        this.mTimeRunning = timeRunning;
     }
 
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        Logger.d(TAG, "Analogue Clock Attached to Window");
-        mChanged = true;
+    public void setMinutesToAlarm(final int minutesToAlarm) {
+        mInterval = minutesToAlarm;
     }
 
     @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        stopClock();
+    public void setSystemTime() {
+        // TODO Auto-generated method stub
+
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
 
-        boolean changed = mChanged;
+        final boolean changed = mChanged;
         if (changed) {
             mChanged = false;
         }
 
         //Here you can set the size of your clock
-        int availableWidth = getRight() - getLeft();
-        int availableHeight = getBottom() - getTop();
+        final int availableWidth = getRight() - getLeft();
+        final int availableHeight = getBottom() - getTop();
         //Actual size
-        int actualX = availableWidth / 2;
-        int actualY = availableHeight / 2;
+        final int actualX = availableWidth / 2;
+        final int actualY = availableHeight / 2;
 
         final Drawable dial = mDial;
         int width = dial.getIntrinsicWidth();
@@ -150,7 +190,7 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
 
         if (availableWidth < width || availableHeight < height) {
             scaled = true;
-            float scale = Math.min((float) availableWidth / (float) width,
+            final float scale = Math.min((float) availableWidth / (float) width,
                     (float) availableHeight / (float) height);
             canvas.save();
             canvas.scale(scale, scale, actualX, actualY);
@@ -227,15 +267,26 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
 
     }
 
-    private float rotation = 0;
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        AppLog.d("Analogue Clock Attached to Window");
+        mChanged = true;
+    }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        stopClock();
+    }
 
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+    @Override
+    protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
         float hScale = 1.0f;
         float vScale = 1.0f;
@@ -248,74 +299,9 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
             vScale = (float) heightSize / (float) mDialHeight;
         }
 
-        float scale = Math.min(hScale, vScale);
+        final float scale = Math.min(hScale, vScale);
         setMeasuredDimension(200, 200);
         setMeasuredDimension(resolveSize((int) (mDialWidth * scale), widthMeasureSpec),
                 resolveSize((int) (mDialHeight * scale), heightMeasureSpec));
-    }
-
-    @Override
-    public void pauseClock() {
-        mHandler.removeCallbacks(mRunnable);
-    }
-
-    @Override
-    public void setTime(final int hours, final int minutes, final int seconds) {
-        //		Logger.d(TAG, "Setting time to " + hours + " " + minutes + " " + seconds);
-        mClockInstance.setSeconds(6.0f * seconds);
-        mClockInstance.setMinutes(minutes + seconds / 60.0f);
-        mClockInstance.setHour(hours + minutes / 60.0f);
-        invalidate();
-    }
-
-    private void setTimeRunning(long timeRunning) {
-        this.mTimeRunning = timeRunning;
-    }
-
-    @Override
-    public void startClock(final long startTime, final int minutesToAlarm) {
-        mStartTime = startTime;
-        mInterval = minutesToAlarm;
-        isClockRunning = true;
-        mHandler.post(mRunnable);
-    }
-
-    @Override
-    public void stopClock() {
-        isClockRunning = false;
-        mClockInstance.reset();
-        invalidate();
-        mHandler.removeCallbacks(mRunnable);
-    }
-
-    /**
-     * Method to process Handler ticks
-     */
-    @Override
-    public void updateTime() {
-        setTimeRunning((Calendar.getInstance().getTimeInMillis() -
-                mStartTime) / 1000);
-        if (mStartTime == 0) {
-            mClockInstance.reset();
-            invalidate();
-            return;
-        }
-        float[] timeIntArray = PrimitiveConversions.getHourFloatTimeArrayFromSeconds(getTimeRunning());
-
-        mClockInstance.setTime(timeIntArray[0], timeIntArray[1], timeIntArray[2]);
-
-        mChanged = true;
-        invalidate();
-    }
-
-    @Override
-    public void setMinutesToAlarm(int minutesToAlarm) {
-        mInterval = minutesToAlarm;
-    }
-
-    @Override
-    public void setSystemTime() {
-        // TODO Auto-generated method stub
-
     }
 }

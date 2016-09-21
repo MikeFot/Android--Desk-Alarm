@@ -1,25 +1,24 @@
 package com.michaelfotiadis.deskalarm.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.constants.AppConstants;
-import com.michaelfotiadis.deskalarm.constants.AppConstants.PreferenceKeys;
+import com.michaelfotiadis.deskalarm.common.base.fragment.BaseFragment;
+import com.michaelfotiadis.deskalarm.model.Broadcasts;
+import com.michaelfotiadis.deskalarm.model.PreferenceKeys;
 import com.michaelfotiadis.deskalarm.services.ErgoStepService;
-import com.michaelfotiadis.deskalarm.utils.AppUtils;
-import com.michaelfotiadis.deskalarm.utils.Logger;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
-import com.michaelfotiadis.deskalarm.utils.ToastUtils;
+import com.michaelfotiadis.deskalarm.utils.ToastHelper;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 import com.michaelfotiadis.deskalarm.views.ErgoAnalogClock;
 import com.michaelfotiadis.deskalarm.views.ErgoClockInterface;
 import com.michaelfotiadis.deskalarm.views.ErgoDigitalClock;
@@ -30,31 +29,20 @@ import com.michaelfotiadis.deskalarm.views.ErgoFusionClock;
  *
  * @author Michael Fotiadis
  */
-public class ErgoClockFragment extends Fragment {
+public class ErgoClockFragment extends BaseFragment {
 
-    /**
-     * Custom Broadcast Receiver class
-     *
-     * @author Michael Fotiadis
-     */
-    private class ResponseReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-
-            final String action = intent.getAction();
-
-            if (action.equalsIgnoreCase(AppConstants.Broadcasts.DATA_CHANGED.getString())) {
-                Logger.d(TAG, "Resetting Clock");
-                long time = getTimeStartedFromPreferences();
-
-                if (time > 0) {
-                    startTheClock(getTimeStartedFromPreferences(), getIntervalFromPreferences());
-                } else {
-                    stopTheClock();
-                }
-            }
-        }
-    }
+    // Key for the integer extra position, used once in the New Instance method
+    private static final String ARG_POSITION = "position";
+    private ToastHelper mToastHelper;
+    // Fields for storing the Clock Interface and its 2 implementations
+    private ErgoClockInterface mCurrentClockInterface;
+    private ErgoAnalogClock mAnalogClock;
+    private ErgoDigitalClock mDigitalClock;
+    private ErgoFusionClock mFusionClock;
+    // variable for storing instance of Broadcast Receiver
+    private ResponseReceiver mResponseReceiver;
+    // variable for storing clock preference
+    private String mClockPreference;
 
     /**
      * Creates a new instance of the clock fragment
@@ -62,31 +50,13 @@ public class ErgoClockFragment extends Fragment {
      * @param position integer position of the fragment
      * @return instance of the ClockFragment
      */
-    public static ErgoClockFragment newInstance(int position) {
-        ErgoClockFragment fragmentInstance = new ErgoClockFragment();
-        Bundle bundle = new Bundle();
+    public static BaseFragment newInstance(final int position) {
+        final BaseFragment fragment = new ErgoClockFragment();
+        final Bundle bundle = new Bundle();
         bundle.putInt(ARG_POSITION, position);
-        fragmentInstance.setArguments(bundle);
-
-        return fragmentInstance;
+        fragment.setArguments(bundle);
+        return fragment;
     }
-
-    // Class Logger TAG
-    private final String TAG = "Fragment Clock";
-
-    // Key for the integer extra position, used once in the New Instance method
-    private static final String ARG_POSITION = "position";
-
-    // Fields for storing the Clock Interface and its 2 implementations
-    private ErgoClockInterface mCurrentClockInterface;
-    private ErgoAnalogClock mAnalogClock;
-    private ErgoDigitalClock mDigitalClock;
-    private ErgoFusionClock mFusionClock;
-
-    // variable for storing instance of Broadcast Receiver
-    private ResponseReceiver mResponseReceiver;
-    // variable for storing clock preference
-    private String mClockPreference;
 
     public int getConstructorArguments() {
         return getArguments().getInt(ARG_POSITION);
@@ -101,28 +71,29 @@ public class ErgoClockFragment extends Fragment {
     }
 
     public int getIntervalFromPreferences() {
-        return new AppUtils().getAppSharedPreferences(getActivity()).getInt(
+        return getPreferenceHandler().getAppSharedPreferences().getInt(
                 getString(R.string.pref_alarm_interval_key),
                 getResources().getInteger(R.integer.time_to_alarm));
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onAttach(final Context context) {
+        super.onAttach(context);
+        mToastHelper = new ToastHelper((Activity) context);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Logger.d(TAG, "Fragment created at position: " + getConstructorArguments());
+    public void onCreate(final Bundle savedInstanceState) {
+        AppLog.d("Fragment created at position: " + getConstructorArguments());
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
 
         // inflate the view
-        View view = inflater.inflate(R.layout.fragment_clock, container, false);
+        final View view = inflater.inflate(R.layout.fragment_clock, container, false);
 
         // create 2 clock views implementing the same interface
         mAnalogClock = (ErgoAnalogClock) view.findViewById(R.id.analogClock);
@@ -132,32 +103,22 @@ public class ErgoClockFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        Logger.d(TAG, "onPause");
-        super.onPause();
-
-        pauseTheClock();
-        unregisterResponseReceiver();
-
-        if (mSuperActivityToast != null && mSuperActivityToast.isShowing()) {
-            mSuperActivityToast.dismiss();
-        }
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
-
-    ;
 
     @Override
     public void onResume() {
-        Logger.d(TAG, "onResume");
+        AppLog.d("onResume");
         super.onResume();
 
         registerResponseReceiver();
 
         // read the clock preferences from the shared preference object
-        mClockPreference = new AppUtils().getAppSharedPreferences(getActivity()).getString(
+        mClockPreference = getPreferenceHandler().getAppSharedPreferences().getString(
                 getActivity().getString(R.string.pref_clock_type_key),
                 getActivity().getString(R.string.pref_clock_type_default));
-        Logger.d(TAG, "Preference is " + mClockPreference);
+        AppLog.d("Preference is " + mClockPreference);
 
         // Set clock by preference
         if (mClockPreference.equals(getActivity().getString(R.string.clock_digital))) {
@@ -189,16 +150,25 @@ public class ErgoClockFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onPause() {
+        AppLog.d("onPause");
+        super.onPause();
+
+        pauseTheClock();
+        unregisterResponseReceiver();
+        mToastHelper.dismissActiveToasts();
+    }
 
     /**
      * Send the command to pause the clock to the interface
      */
     private void pauseTheClock() {
-        new ToastUtils().dismissActiveToasts();
+        mToastHelper.dismissActiveToasts();
         mCurrentClockInterface.pauseClock();
     }
 
@@ -208,9 +178,9 @@ public class ErgoClockFragment extends Fragment {
     private void registerResponseReceiver() {
         unregisterResponseReceiver();
 
-        Logger.d(TAG, "Registering Response Receiver");
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(AppConstants.Broadcasts.DATA_CHANGED.getString());
+        AppLog.d("Registering Response Receiver");
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Broadcasts.DATA_CHANGED.getString());
 
         mResponseReceiver = new ResponseReceiver();
         getActivity().registerReceiver(mResponseReceiver, intentFilter);
@@ -221,31 +191,22 @@ public class ErgoClockFragment extends Fragment {
      *
      * @param time
      */
-    private void startTheClock(long time, int interval) {
+    private void startTheClock(final long time, final int interval) {
         mCurrentClockInterface.startClock(time, interval);
     }
-
-    private SuperActivityToast mSuperActivityToast;
 
     /**
      * Send the command to stop the clock to the interface and toast the time ran
      */
     private void stopTheClock() {
-        long timeRunning = mCurrentClockInterface.getTimeRunning();
+        final long timeRunning = mCurrentClockInterface.getTimeRunning();
 
 
         // create a report message for the toast
         if (timeRunning > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Timer ran for \t");
-            sb.append(PrimitiveConversions.getTimeStringFromSeconds(timeRunning));
+            final String sb = String.format("Timer ran for \t%s", PrimitiveConversions.getTimeStringFromSeconds(timeRunning));
 
-            // make an info toast dismissing active ones first
-            if (mSuperActivityToast != null && mSuperActivityToast.isShowing()) {
-                SuperActivityToast.cancelAllSuperToasts();
-                mSuperActivityToast.dismiss();
-            }
-            mSuperActivityToast = new ToastUtils().makeInfoToast(getActivity(), sb.toString());
+            mToastHelper.makeInfoToast(sb);
         }
         // subsequently stop the clock
         mCurrentClockInterface.stopClock();
@@ -260,11 +221,31 @@ public class ErgoClockFragment extends Fragment {
         }
         try {
             getActivity().unregisterReceiver(mResponseReceiver);
-            Logger.d(TAG, "Receiver Unregistered Successfully");
-        } catch (Exception e) {
-            Logger.d(TAG,
-                    "Response Receiver Not Registered or Already Unregistered. Exception : "
-                            + e.getLocalizedMessage());
+            AppLog.d("Receiver Unregistered Successfully");
+        } catch (final Exception e) {
+            AppLog.e(String.format("Response Receiver Not Registered or Already Unregistered. Exception : %s", e.getLocalizedMessage()));
+        }
+    }
+
+    /**
+     * Custom Broadcast Receiver class
+     *
+     * @author Michael Fotiadis
+     */
+    private class ResponseReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+
+            final String action = intent.getAction();
+
+            if (action.equalsIgnoreCase(Broadcasts.DATA_CHANGED.getString())) {
+                AppLog.d("Resetting Clock");
+                if (getTimeStartedFromPreferences() > 0) {
+                    startTheClock(getTimeStartedFromPreferences(), getIntervalFromPreferences());
+                } else {
+                    stopTheClock();
+                }
+            }
         }
     }
 

@@ -2,16 +2,12 @@ package com.michaelfotiadis.deskalarm;
 
 import android.app.Application;
 
-import com.michaelfotiadis.deskalarm.utils.Logger;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class MyApplication extends Application {
-
-    private final String TAG = "DeskAlarmApp";
-
-
     @Override
     public void onCreate() {
-        Logger.d(TAG, "Starting Application");
+        AppLog.d("Starting Application");
         super.onCreate();
     }
 

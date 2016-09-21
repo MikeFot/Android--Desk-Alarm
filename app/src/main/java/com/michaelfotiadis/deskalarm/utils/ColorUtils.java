@@ -2,11 +2,15 @@ package com.michaelfotiadis.deskalarm.utils;
 
 import android.graphics.Color;
 
-public class ColorUtils {
+public final class ColorUtils {
 
-    public int getLighterColor(final int color) {
+    private ColorUtils() {
+        // do not instantiate
+    }
 
-        float[] hsv = new float[3];
+    public static int getLighterColor(final int color) {
+
+        final float[] hsv = new float[3];
 
         Color.colorToHSV(color, hsv);
         hsv[2] = 1.5f * hsv[2];
@@ -18,9 +22,9 @@ public class ColorUtils {
         return Color.HSVToColor(hsv);
     }
 
-    public int getDarkerColor(final int color) {
+    public static int getDarkerColor(final int color) {
 
-        float[] hsv = new float[3];
+        final float[] hsv = new float[3];
 
         Color.colorToHSV(color, hsv);
         hsv[2] = 0.5f * hsv[2];
@@ -32,7 +36,7 @@ public class ColorUtils {
         return Color.HSVToColor(hsv);
     }
 
-    public int getRightBitShiftedColor(final int color) {
+    public static int getRightBitShiftedColor(final int color) {
         return color >> 16;
     }
 

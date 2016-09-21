@@ -29,8 +29,8 @@ public class CustomFragmentAdapter extends FragmentStatePagerAdapter {
      */
     public CustomFragmentAdapter(final FragmentActivity context) {
         super(context.getSupportFragmentManager());
-        mTabs = new ArrayList<ErgoFragmentInfo>();
-        mTitleList = new ArrayList<String>();
+        mTabs = new ArrayList<>();
+        mTitleList = new ArrayList<>();
 
         mContext = context;
     }

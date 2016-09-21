@@ -61,6 +61,7 @@ android {
 dependencies {
     compile "com.android.support:support-v13:$appCompatLibVersion"
     compile "com.android.support:appcompat-v7:$appCompatLibVersion"
+    compile "com.android.support:preference-v14:$appCompatLibVersion"
     compile group: 'org.achartengine', name: 'achartengine', version: '1.2.0'
     compile 'com.github.johnpersano:supertoasts:2.0'
     compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.0'

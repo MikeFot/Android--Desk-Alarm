@@ -15,53 +15,33 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.constants.AppConstants;
-import com.michaelfotiadis.deskalarm.managers.ErgoAlarmManager;
-import com.michaelfotiadis.deskalarm.managers.ErgoAlarmManager.ALARM_MODE;
-import com.michaelfotiadis.deskalarm.utils.AppUtils;
-import com.michaelfotiadis.deskalarm.utils.Logger;
+import com.michaelfotiadis.deskalarm.common.base.core.Core;
+import com.michaelfotiadis.deskalarm.common.base.core.CoreProvider;
+import com.michaelfotiadis.deskalarm.common.base.core.ErgoAlarmManager.ALARM_MODE;
+import com.michaelfotiadis.deskalarm.model.Broadcasts;
+import com.michaelfotiadis.deskalarm.model.Payloads;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.util.Calendar;
+import java.util.Locale;
+
 
 public class ErgoStepService extends IntentService implements SensorEventListener {
 
-    // enumerator for accuracy
-    private static enum FLAGS {
-        MANUAL, LOW_ACCURACY, HIGH_ACCURACY
-    }
+    private static final String TAG = ErgoStepService.class.getSimpleName();
+
+    private final Core mCore;
+
+    private static boolean sIsServiceRunning = false;
+    // Thread fields
+    private final long THREAD_WAIT_TIME_SHORT = 1000;
+    private final long THREAD_WAIT_TIME_LONG = 5000;
 
 
-    /**
-     * Screen receiver which extends broadcast receiver
-     *
-     * @author Michael Fotiadis
-     */
-    public class ScreenReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                Logger.i(TAG, "Screen Off");
-            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                Logger.i(TAG, "Screen On");
-                // Reset the counter
-                timesIdle = 0;
-            }
-        }
-    }
+    private final int maxTimesIdle = 15;
+    private final int MINIMUM_TIME_BETWEEN_STEPS = 10000;
 
-    public static boolean isServiceRunning() {
-        return isServiceRunning;
-    }
 
-    public static void setServiceRunning(boolean isServiceRunning) {
-        ErgoStepService.isServiceRunning = isServiceRunning;
-    }
-
-    ;
-    private static boolean isServiceRunning = false;
-
-    // Log Tag
-    private final String TAG = "StepService";
     private FLAGS mFlag;
     // Sensor fields
     private SensorManager mSensorManager;
@@ -74,25 +54,109 @@ public class ErgoStepService extends IntentService implements SensorEventListene
     private BroadcastReceiver mReceiver;
     // Wake Lock fields
     private WakeLock mWakeLock;
-
-    // Thread fields
-    private final long THREAD_WAIT_TIME_SHORT = 1000;
-    private final long THREAD_WAIT_TIME_LONG = 5000;
     // Variables
     private int stepCount = 0;
     private int timesIdle = 0;
-    private final int maxTimesIdle = 15;
     private long mStepValue;
     private long mTimeOfLastStep = 0;
     private long mTimeStepInterval = Long.MAX_VALUE;
-
-    private final int MINIMUM_TIME_BETWEEN_STEPS = 10000;
 
     /**
      * Main constructor
      */
     public ErgoStepService() {
         super("StepService");
+        mCore = new CoreProvider(this);
+    }
+
+    public static boolean isServiceRunning() {
+        return sIsServiceRunning;
+    }
+
+    public static void setServiceRunning(final boolean isServiceRunning) {
+        ErgoStepService.sIsServiceRunning = isServiceRunning;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        setServiceRunning(true);
+        mCore.getAlarmManager().setAlarm(ALARM_MODE.NORMAL);
+    }
+
+    @Override
+    public void onDestroy() {
+        AppLog.d("onDestroy");
+        setServiceRunning(false);
+
+        mCore.getAlarmManager().cancelAlarm();
+
+        // Release the wake lock
+        releaseWakeLock();
+        unregisterSensorListeners();
+
+        // broadcast that the service has stopped
+        broadcastNotificationInt(Broadcasts.STEP_SERVICE_STOPPED.getString(), -1);
+
+        unregisterScreenReceiver();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onHandleIntent(final Intent intent) {
+
+        registerScreenReceiver();
+
+        // check version and process flags
+        assignServiceFlags();
+
+        final int version = android.os.Build.VERSION.SDK_INT;
+
+        if (mFlag != FLAGS.MANUAL && version >= Build.VERSION_CODES.KITKAT) {
+            AppLog.d("Starting Service in Automatic Mode");
+            processAutomaticMode();
+        } else {
+            AppLog.d("Starting Service in Manual Mode");
+            processManualMode();
+        }
+    }
+
+    @Override
+    public void onSensorChanged(final SensorEvent event) {
+        final Sensor sensor = event.sensor;
+        final float[] values = event.values;
+        int value = -1;
+
+        if (values.length > 0) {
+            value = (int) values[0];
+        }
+
+        if (sensor.getType() == Sensor.TYPE_STEP_COUNTER && isServiceRunning()) {
+            // calculate how long has passed since the last step
+            mTimeStepInterval = Calendar.getInstance().getTimeInMillis() - mTimeOfLastStep;
+
+            if (value > mStepValue) {
+                // compare time passed since last step with minimum time between steps
+                if (mTimeStepInterval < MINIMUM_TIME_BETWEEN_STEPS) {
+                    stepCount++;
+                    AppLog.d("TYPE_STEP_COUNTER " + value + " at an interval of " + mTimeStepInterval);
+                    mCore.getAlarmManager().setAlarm(ALARM_MODE.AUTO);
+                    mStepValue = value;
+                } else {
+                    AppLog.i("Steps Not Far Apart Enough");
+                }
+            } else {
+                AppLog.i("Repeating Step Event");
+            }
+            mTimeOfLastStep = Calendar.getInstance().getTimeInMillis();
+        } else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+            // Same Sensor but always transmits -1
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(final Sensor sensor, final int accuracy) {
+        // do nothing
     }
 
     /**
@@ -100,7 +164,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
      */
     private void acquireWakeLock() {
         final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        Logger.d(TAG, "Wake Lock with Flags : " + "Partial Wake Lock");
+        AppLog.d("Wake Lock with Flags : " + "Partial Wake Lock");
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         mWakeLock.acquire();
     }
@@ -109,7 +173,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
      * Reads shared preferences and assigns the Service Flag
      */
     private void assignServiceFlags() {
-        final String mode = new AppUtils().getAppSharedPreferences(this).getString(
+        final String mode = mCore.getPreferenceHandler().getAppSharedPreferences().getString(
                 this.getString(R.string.pref_sensor_modes_key),
                 this.getString(R.string.pref_sensor_modes_default));
 
@@ -133,97 +197,13 @@ public class ErgoStepService extends IntentService implements SensorEventListene
      * @param value           Value to broadcast as extra
      */
     private void broadcastNotificationInt(final String broadcastString, final int value) {
-        Logger.d(TAG, "Broadcasting " + broadcastString + " with value " + value);
+        AppLog.d(String.format(Locale.UK, "Broadcasting %s with value %d", broadcastString, value));
         final Intent broadcastIntent = new Intent(broadcastString);
 
         if (value > 0) {
-            broadcastIntent.putExtra(AppConstants.Payloads.PAYLOAD_1.getString(), value);
+            broadcastIntent.putExtra(Payloads.PAYLOAD_1.getString(), value);
         }
         this.sendBroadcast(broadcastIntent);
-    }
-
-    @Override
-    public void onAccuracyChanged(final Sensor sensor, final int accuracy) {
-        // do nothing
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        setServiceRunning(true);
-        new ErgoAlarmManager().setAlarm(getApplicationContext(), ALARM_MODE.NORMAL);
-    }
-
-
-    @Override
-    public void onDestroy() {
-        Logger.d(TAG, "onDestroy");
-        setServiceRunning(false);
-
-        new ErgoAlarmManager().cancelAlarm(this);
-
-        // Release the wake lock
-        releaseWakeLock();
-        unregisterSensorListeners();
-
-        // broadcast that the service has stopped
-        broadcastNotificationInt(AppConstants.Broadcasts.STEP_SERVICE_STOPPED.getString(), -1);
-
-        unregisterScreenReceiver();
-        super.onDestroy();
-    }
-
-
-    @Override
-    protected void onHandleIntent(final Intent intent) {
-
-        registerScreenReceiver();
-
-        // check version and process flags
-        assignServiceFlags();
-
-        final int version = android.os.Build.VERSION.SDK_INT;
-
-        if (mFlag != FLAGS.MANUAL && version >= Build.VERSION_CODES.KITKAT) {
-            Logger.d(TAG, "Starting Service in Automatic Mode");
-            processAutomaticMode();
-        } else {
-            Logger.d(TAG, "Starting Service in Manual Mode");
-            processManualMode();
-        }
-    }
-
-    @Override
-    public void onSensorChanged(final SensorEvent event) {
-        final Sensor sensor = event.sensor;
-        final float[] values = event.values;
-        int value = -1;
-
-        if (values.length > 0) {
-            value = (int) values[0];
-        }
-
-        if (sensor.getType() == Sensor.TYPE_STEP_COUNTER && isServiceRunning()) {
-            // calculate how long has passed since the last step
-            mTimeStepInterval = Calendar.getInstance().getTimeInMillis() - mTimeOfLastStep;
-
-            if (value > mStepValue) {
-                // compare time passed since last step with minimum time between steps
-                if (mTimeStepInterval < MINIMUM_TIME_BETWEEN_STEPS) {
-                    stepCount++;
-                    Logger.d(TAG, "TYPE_STEP_COUNTER " + value + " at an interval of " + mTimeStepInterval);
-                    new ErgoAlarmManager().setAlarm(getApplicationContext(), ALARM_MODE.AUTO);
-                    mStepValue = value;
-                } else {
-                    Logger.i(TAG, "Steps Not Far Apart Enough");
-                }
-            } else {
-                Logger.i(TAG, "Repeating Step Event");
-            }
-            mTimeOfLastStep = Calendar.getInstance().getTimeInMillis();
-        } else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
-            // Same Sensor but always transmits -1
-        }
     }
 
     /**
@@ -248,7 +228,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
 
                     acquireWakeLock();
                     registerSensorListeners();
-                    Logger.i(TAG, "Running for : " + THREAD_WAIT_TIME_LONG);
+                    AppLog.i("Running for : " + THREAD_WAIT_TIME_LONG);
 
                     wait(THREAD_WAIT_TIME_LONG);
 
@@ -261,9 +241,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
                     // Broadcast that the phone has not moved
                     if (stepCount == 0) {
                         timesIdle++;
-                        broadcastNotificationInt(AppConstants.
-                                        Broadcasts.IDLE_DETECTED.getString(),
-                                timesIdle);
+                        broadcastNotificationInt(Broadcasts.IDLE_DETECTED.getString(), timesIdle);
                         if (timesIdle < maxTimesIdle) {
                         } else {
                             timesIdle = maxTimesIdle;
@@ -275,14 +253,14 @@ public class ErgoStepService extends IntentService implements SensorEventListene
                     }
 
                     if (waitTime > 0) {
-                        Logger.d(TAG, "Waiting for : " + waitTime);
+                        AppLog.d("Waiting for : " + waitTime);
                         wait(waitTime);
                     } else {
-                        Logger.d(TAG, "Sensor running consecutively");
+                        AppLog.d("Sensor running consecutively");
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     setServiceRunning(false);
-                    Logger.d(TAG, "Interrupted; " + e.getMessage());
+                    AppLog.d("Interrupted; " + e.getMessage());
                 }
             }
         }
@@ -297,9 +275,9 @@ public class ErgoStepService extends IntentService implements SensorEventListene
             while (isServiceRunning()) {
                 try {
                     wait();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     setServiceRunning(false);
-                    Logger.d(TAG, "Interrupted; " + e.getMessage());
+                    AppLog.d("Interrupted; " + e.getMessage());
                 }
             }
         }
@@ -320,7 +298,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void registerSensorListeners() {
-        Logger.d(TAG, "Initialising Sensor Manager");
+        AppLog.d("Initialising Sensor Manager");
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mStepCounterSensor = mSensorManager
                 .getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
@@ -329,11 +307,11 @@ public class ErgoStepService extends IntentService implements SensorEventListene
 
         // Do a check, just in case
         if (mSensorManager == null || mStepCounterSensor == null || mStepDetectorSensor == null) {
-            Logger.e(TAG, "Error initialising sensors");
+            AppLog.e("Error initialising sensors");
         }
 
         // Register the listeners
-        Logger.d(TAG, "Registering Listeners");
+        AppLog.d("Registering Listeners");
         mSensorManager.registerListener(this, mStepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mStepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -343,30 +321,26 @@ public class ErgoStepService extends IntentService implements SensorEventListene
      */
     private void releaseWakeLock() {
         if (mWakeLock != null && mWakeLock.isHeld()) {
-            Logger.d(TAG, "Releasing Wake Lock");
+            AppLog.d("Releasing Wake Lock");
             mWakeLock.release();
         } else {
-            Logger.d(TAG, "No Wake Lock to release");
+            AppLog.d("No Wake Lock to release");
         }
     }
-
 
     /**
      * Method for unregistering the screen receiver
      */
     private void unregisterScreenReceiver() {
         if (mReceiver == null) {
-            Logger.d(TAG, "No Screen Receiver to unregister");
+            AppLog.d("No Screen Receiver to unregister");
             return;
         }
         try {
             unregisterReceiver(mReceiver);
-            Logger.d(TAG, "Screen Receiver Unregistered Successfully");
-        } catch (Exception e) {
-            Logger.d(
-                    TAG,
-                    "Screen Receiver Not Registered or Already Unregistered. Exception : "
-                            + e.getLocalizedMessage());
+            AppLog.d("Screen Receiver Unregistered Successfully");
+        } catch (final Exception e) {
+            AppLog.d(String.format("Screen Receiver Not Registered or Already Unregistered. Exception : %s", e.getLocalizedMessage()));
         }
     }
 
@@ -375,19 +349,41 @@ public class ErgoStepService extends IntentService implements SensorEventListene
      */
     private void unregisterSensorListeners() {
         if (mSensorManager == null) {
-            Logger.d(TAG, "No Sensor Receiver to unregister");
+            AppLog.d("No Sensor Receiver to unregister");
             return;
         }
         try {
-            Logger.d(TAG, "Removing Sensor Receivers");
+            AppLog.d("Removing Sensor Receivers");
             mSensorManager.unregisterListener(this, mStepCounterSensor);
             mSensorManager.unregisterListener(this, mStepDetectorSensor);
-        } catch (Exception e) {
-            Logger.d(
-                    TAG,
-                    "Sensor Receiver Not Registered or Already Unregistered. Exception : "
-                            + e.getLocalizedMessage());
+        } catch (final Exception e) {
+            AppLog.d(String.format("Sensor Receiver Not Registered or Already Unregistered. Exception : %s", e.getLocalizedMessage()));
         }
 
     }
+
+
+    // enumerator for accuracy
+    private enum FLAGS {
+        MANUAL, LOW_ACCURACY, HIGH_ACCURACY
+    }
+
+    /**
+     * Screen receiver which extends broadcast receiver
+     *
+     * @author Michael Fotiadis
+     */
+    public class ScreenReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                AppLog.i("Screen Off");
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                AppLog.i("Screen On");
+                // Reset the counter
+                timesIdle = 0;
+            }
+        }
+    }
+
 }

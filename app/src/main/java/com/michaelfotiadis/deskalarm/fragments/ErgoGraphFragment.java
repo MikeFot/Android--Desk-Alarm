@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,11 +15,11 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.constants.AppConstants;
+import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.common.base.fragment.BaseFragment;
 import com.michaelfotiadis.deskalarm.containers.ErgoTimeDataInstance;
-import com.michaelfotiadis.deskalarm.managers.ErgoDataManager;
-import com.michaelfotiadis.deskalarm.utils.AppUtils;
-import com.michaelfotiadis.deskalarm.utils.Logger;
+import com.michaelfotiadis.deskalarm.model.Broadcasts;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 import com.michaelfotiadis.deskalarm.views.ErgoGraphicalViewBuilder;
 
 import org.achartengine.GraphicalView;
@@ -28,20 +27,23 @@ import org.achartengine.model.SeriesSelection;
 
 import java.util.SortedMap;
 
-public class ErgoGraphFragment extends Fragment implements OnClickListener {
+public class ErgoGraphFragment extends BaseFragment implements OnClickListener {
 
-    private class ResponseReceiver extends BroadcastReceiver {
+    private static final String ARG_POSITION = "position";
+    private ResponseReceiver mResponseReceiver;
+    // TextView to display in case graph data is null
+    private TextView mInformationTextView;
+    private GraphicalView mChartView;
+    // Button Fields
+    private ImageButton mZoomExtentsButton;
+    private ImageButton mZoomInButton;
+    private ImageButton mZoomOutButton;
+    private LinearLayout mZoomLayout;
+    // linear layout containing a GraphicalView
+    private LinearLayout mChartContainerLayout;
+    private int mDefaultTextViewColor;
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Logger.d(TAG, "On Receiver Result");
-            if (intent.getAction().equalsIgnoreCase(
-                    AppConstants.Broadcasts.DATA_CHANGED.getString())) {
-                Logger.d(TAG, "Got Data Changed to Graph Fragment");
-                generateChart();
-            }
-        }
-    }
+    private PreferenceHandler mPreferenceHandler;
 
     /**
      * Fragment constructor
@@ -49,67 +51,12 @@ public class ErgoGraphFragment extends Fragment implements OnClickListener {
      * @param position integer position of the fragment on the ViewPager
      * @return
      */
-    public static ErgoGraphFragment newInstance(final int position) {
-        ErgoGraphFragment eFragment = new ErgoGraphFragment();
-        Bundle b = new Bundle();
+    public static BaseFragment newInstance(final int position) {
+        final ErgoGraphFragment eFragment = new ErgoGraphFragment();
+        final Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         eFragment.setArguments(b);
-
         return eFragment;
-    }
-
-    private static final String ARG_POSITION = "position";
-    private final String TAG = "Fragment Graph";
-
-    private ResponseReceiver mResponseReceiver;
-
-    // TextView to display in case graph data is null
-    private TextView mInformationTextView;
-
-    private GraphicalView mChartView;
-
-    // Button Fields
-    private ImageButton mZoomExtentsButton;
-    private ImageButton mZoomInButton;
-    private ImageButton mZoomOutButton;
-    private LinearLayout mZoomLayout;
-
-    // linear layout containing a GraphicalView
-    private LinearLayout mChartContainerLayout;
-
-    private int mDefaultTextViewColor;
-
-    /**
-     * Method which generates the Chart View
-     */
-    private void generateChart() {
-        mChartContainerLayout.removeAllViews();
-
-        mChartView = new ErgoGraphicalViewBuilder().generateChart(getActivity());
-
-        // Adding click event to the Line Chart.
-        mChartView.setOnClickListener(this);
-
-        mChartView.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        mInformationTextView.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-
-        // Add the graphical view mChart object into the Linear layout
-        mChartContainerLayout.addView(mInformationTextView);
-        mChartContainerLayout.addView(mChartView);
-
-        // hide the graph if there is no data
-        final SortedMap<String, ErgoTimeDataInstance> data = new ErgoDataManager(getActivity()).retrieveDailyData();
-        if (data.size() == 0) {
-            mInformationTextView.setText(R.string.label_no_data_yet);
-            mChartView.setVisibility(View.GONE);
-            mZoomLayout.setVisibility(View.GONE);
-        } else {
-            mInformationTextView.setText(R.string.no_selection);
-            mChartView.setVisibility(View.VISIBLE);
-            mZoomLayout.setVisibility(View.VISIBLE);
-        }
     }
 
     /**
@@ -119,11 +66,6 @@ public class ErgoGraphFragment extends Fragment implements OnClickListener {
      */
     public int getConstructorArguments() {
         return getArguments().getInt(ARG_POSITION);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -140,15 +82,21 @@ public class ErgoGraphFragment extends Fragment implements OnClickListener {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Logger.d(TAG, "CREATED FRAGMENT WITH " + getConstructorArguments());
+    public void onAttach(final Context context) {
+        super.onAttach(context);
+        mPreferenceHandler = new PreferenceHandler(context);
+    }
+
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        AppLog.d("CREATED FRAGMENT WITH " + getConstructorArguments());
 
         super.onCreate(savedInstanceState);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_graph, container, false);
 
@@ -170,9 +118,8 @@ public class ErgoGraphFragment extends Fragment implements OnClickListener {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        unregisterResponseReceiver();
+    public void onActivityCreated(final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -184,26 +131,65 @@ public class ErgoGraphFragment extends Fragment implements OnClickListener {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterResponseReceiver();
+    }
+
+    /**
+     * Method which generates the Chart View
+     */
+    private void generateChart() {
+        mChartContainerLayout.removeAllViews();
+
+        mChartView = new ErgoGraphicalViewBuilder().generateChart(getActivity(), getPreferenceHandler(), getDataManager());
+
+        // Adding click event to the Line Chart.
+        mChartView.setOnClickListener(this);
+
+        mChartView.setLayoutParams(new LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        mInformationTextView.setLayoutParams(new LayoutParams(
+                LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+
+        // Add the graphical view mChart object into the Linear layout
+        mChartContainerLayout.addView(mInformationTextView);
+        mChartContainerLayout.addView(mChartView);
+
+        // hide the graph if there is no data
+        final SortedMap<String, ErgoTimeDataInstance> data = getDataManager().retrieveDailyData();
+        if (data.size() == 0) {
+            mInformationTextView.setText(R.string.label_no_data_yet);
+            mChartView.setVisibility(View.GONE);
+            mZoomLayout.setVisibility(View.GONE);
+        } else {
+            mInformationTextView.setText(R.string.no_selection);
+            mChartView.setVisibility(View.VISIBLE);
+            mZoomLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void doSeriesSelection() {
-        SeriesSelection series_selection = mChartView
+        final SeriesSelection series_selection = mChartView
                 .getCurrentSeriesAndPoint();
 
         if (series_selection != null) {
 
             // get the key for the selected index
-            String key = new ErgoDataManager(getActivity())
+            final String key = getDataManager()
                     .retrieveDailyData()
                     .keySet()
                     .toArray(
-                            new String[new ErgoDataManager(getActivity())
+                            new String[getDataManager()
                                     .retrieveDailyData().size()])
                     [(int) series_selection.getXValue()];
 
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append("Selected : ");
             sb.append(key);
             sb.append(" - ");
@@ -214,9 +200,9 @@ public class ErgoGraphFragment extends Fragment implements OnClickListener {
             } else {
                 sb.append(" minutes");
             }
-            int textColour;
+            final int textColour;
 
-            final int interval = new AppUtils().getAppSharedPreferences(getActivity())
+            final int interval = mPreferenceHandler.getAppSharedPreferences()
                     .getInt(getActivity().getString(
                             R.string.pref_alarm_interval_key), 1);
 
@@ -242,9 +228,9 @@ public class ErgoGraphFragment extends Fragment implements OnClickListener {
     private void registerResponseReceiver() {
         unregisterResponseReceiver();
 
-        Logger.d(TAG, "Registering Response Receiver");
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(AppConstants.Broadcasts.DATA_CHANGED
+        AppLog.d("Registering Response Receiver");
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Broadcasts.DATA_CHANGED
                 .getString());
         mResponseReceiver = new ResponseReceiver();
         getActivity().registerReceiver(mResponseReceiver, intentFilter);
@@ -257,11 +243,23 @@ public class ErgoGraphFragment extends Fragment implements OnClickListener {
 
         try {
             getActivity().unregisterReceiver(mResponseReceiver);
-            Logger.d(TAG, "Receiver Unregistered Successfully");
-        } catch (Exception e) {
-            Logger.d(TAG,
+            AppLog.d("Receiver Unregistered Successfully");
+        } catch (final Exception e) {
+            AppLog.d(
                     "Response Receiver Not Registered or Already Unregistered. Exception : "
                             + e.getLocalizedMessage());
+        }
+    }
+
+    private class ResponseReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            AppLog.d("On Receiver Result");
+            if (intent.getAction().equalsIgnoreCase(Broadcasts.DATA_CHANGED.getString())) {
+                AppLog.d("Got Data Changed to Graph Fragment");
+                generateChart();
+            }
         }
     }
 

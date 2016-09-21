@@ -3,24 +3,20 @@ package com.michaelfotiadis.deskalarm.constants;
 import android.content.Context;
 
 import com.michaelfotiadis.deskalarm.containers.ErgoTimeDataInstance;
-import com.michaelfotiadis.deskalarm.utils.AppUtils;
-import com.michaelfotiadis.deskalarm.utils.Logger;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
-public class Singleton {
-    private final String TAG = "Singleton";
-
+public final class Singleton {
     // map storing usage data in memory as a String - ErgoTimeDataInstance map
     private LinkedHashMap<String, ErgoTimeDataInstance> usageData;
 
     private Singleton() {
         // initialise the SortedMap
         setUsageData(new LinkedHashMap<String, ErgoTimeDataInstance>());
-    }
-
-    private static class SingletonHolder {
-        private static final Singleton instance = new Singleton();
     }
 
     public static Singleton getInstance() {
@@ -31,7 +27,7 @@ public class Singleton {
         return usageData;
     }
 
-    public void setUsageData(LinkedHashMap<String, ErgoTimeDataInstance> usageData) {
+    private void setUsageData(final LinkedHashMap<String, ErgoTimeDataInstance> usageData) {
         this.usageData = usageData;
     }
 
@@ -46,12 +42,21 @@ public class Singleton {
             return false;
         }
 
-        String timeString = new AppUtils().getSystemTimeFormat(context, dataInstance.getCalendarLogged());
+        final String timeString = getSystemTimeFormat(context, dataInstance.getCalendarLogged());
 
         // add the data to the SortedMap
         getUsageData().put(timeString, dataInstance);
-        Logger.i(TAG, "Added data " + timeString + " - "
-                + dataInstance.getTimeLogged());
+        AppLog.i(String.format(Locale.UK, "Added data %s - %d", timeString, dataInstance.getTimeLogged()));
         return true;
+    }
+
+    private static String getSystemTimeFormat(final Context context, final Calendar calendar) {
+        // Gets system TF
+        final DateFormat tf = android.text.format.DateFormat.getTimeFormat(context);
+        return tf.format(calendar.getTime());
+    }
+
+    private static final class SingletonHolder {
+        private static final Singleton instance = new Singleton();
     }
 }

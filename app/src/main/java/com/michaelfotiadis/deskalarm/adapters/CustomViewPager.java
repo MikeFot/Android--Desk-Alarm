@@ -7,21 +7,21 @@ import android.view.MotionEvent;
 
 public class CustomViewPager extends ViewPager {
 
-    public CustomViewPager(Context context) {
+    public CustomViewPager(final Context context) {
         super(context);
     }
 
-    public CustomViewPager(Context context, AttributeSet attrs) {
+    public CustomViewPager(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
+    public boolean onInterceptTouchEvent(final MotionEvent event) {
         return false;
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(final MotionEvent event) {
         return super.onTouchEvent(event);
     }
 

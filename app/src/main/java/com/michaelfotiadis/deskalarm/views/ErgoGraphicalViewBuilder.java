@@ -7,9 +7,9 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.michaelfotiadis.deskalarm.R;
+import com.michaelfotiadis.deskalarm.common.base.core.ErgoDataManager;
+import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.containers.ErgoTimeDataInstance;
-import com.michaelfotiadis.deskalarm.managers.ErgoDataManager;
-import com.michaelfotiadis.deskalarm.utils.AppUtils;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -41,15 +41,11 @@ public class ErgoGraphicalViewBuilder {
     private int mColorGradientStart;
     private int mGradientLimit;
 
-    /**
-     * Generates a GraphicalView for a given Context
-     *
-     * @param context Parent Context of the View
-     * @return GraphicalView object
-     */
-    public GraphicalView generateChart(final Context context) {
+    public GraphicalView generateChart(final Context context,
+                                       final PreferenceHandler preferenceHandler,
+                                       final ErgoDataManager dataManager) {
 
-        final int interval = new AppUtils().getAppSharedPreferences(context)
+        final int interval = preferenceHandler.getAppSharedPreferences()
                 .getInt(context.getString(
                         R.string.pref_alarm_interval_key), 1);
 
@@ -70,7 +66,7 @@ public class ErgoGraphicalViewBuilder {
                 TypedValue.COMPLEX_UNIT_SP, 12, displayMetrics);
 
         // Create XYSeriesRenderer to customise XSeries
-        XYSeriesRenderer xyRenderer = new XYSeriesRenderer();
+        final XYSeriesRenderer xyRenderer = new XYSeriesRenderer();
 
         // chart values dependent on fontSize
         xyRenderer.setDisplayChartValues(true);
@@ -120,7 +116,7 @@ public class ErgoGraphicalViewBuilder {
 
         // Switch margins colour according to application theme
         final String defaultThemeValue = context.getString(R.string.pref_theme_default);
-        final String themeKey = new AppUtils().getAppSharedPreferences(context).
+        final String themeKey = new PreferenceHandler(context).getAppSharedPreferences().
                 getString(context.getString(R.string.pref_theme_key), defaultThemeValue);
 
         // default theme value should be "Dark", so use colours that contrast nicely
@@ -165,13 +161,13 @@ public class ErgoGraphicalViewBuilder {
         long maxY = Long.MIN_VALUE;
         mSeries = new XYSeries(context.getString(R.string.graph_title));
         // get the data from the data manager
-        final SortedMap<String, ErgoTimeDataInstance> data = new ErgoDataManager(context).retrieveDailyData();
+        final SortedMap<String, ErgoTimeDataInstance> data = dataManager.retrieveDailyData();
         int i = 0;
         if (data != null) {
             // iterate through the entry set
-            for (Entry<String, ErgoTimeDataInstance> entry : data.entrySet()) {
-                String x = (String) entry.getKey();
-                double y = entry.getValue().getTimeLogged();
+            for (final Entry<String, ErgoTimeDataInstance> entry : data.entrySet()) {
+                final String x = entry.getKey();
+                final double y = entry.getValue().getTimeLogged();
 
                 // find the maximum Y value
                 if (maxY < y) {
@@ -192,7 +188,7 @@ public class ErgoGraphicalViewBuilder {
         mRenderer.setYAxisMin(0);
 
         // set pan - zoom limits
-        double[] panLimits = new double[]{-3, i + 3, 0, maxY + 0.5 * maxY};
+        final double[] panLimits = new double[]{-3, i + 3, 0, maxY + 0.5 * maxY};
         mRenderer.setPanLimits(panLimits);
         mRenderer.setPanEnabled(true, false);
         mRenderer.setZoomLimits(panLimits);
@@ -205,7 +201,7 @@ public class ErgoGraphicalViewBuilder {
         mRenderer.addSeriesRenderer(xyRenderer);
 
         // Creating an intent to plot line chart using dataset and multipleRenderer
-        mChartView = (GraphicalView) ChartFactory.getBarChartView(context, mDataset, mRenderer, Type.STACKED);
+        mChartView = ChartFactory.getBarChartView(context, mDataset, mRenderer, Type.STACKED);
 
         return mChartView;
     }

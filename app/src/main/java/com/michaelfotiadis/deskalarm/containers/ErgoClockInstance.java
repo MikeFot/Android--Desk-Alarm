@@ -24,7 +24,7 @@ public class ErgoClockInstance implements Parcelable {
      * @param minutes float
      * @param seconds float
      */
-    public void setTime(float hours, float minutes, float seconds) {
+    public void setTime(final float hours, final float minutes, final float seconds) {
         this.mHour = hours;
         this.mMinutes = minutes;
         this.mSeconds = seconds;
@@ -36,16 +36,35 @@ public class ErgoClockInstance implements Parcelable {
         return 0;
     }
 
+    @Override
+    public void writeToParcel(final Parcel out, final int flags) {
+        out.writeFloat(mHour);
+        out.writeFloat(mMinutes);
+        out.writeFloat(mSeconds);
+    }
+
     public float getHour() {
         return mHour;
+    }
+
+    public void setHour(final float mHour) {
+        this.mHour = mHour;
     }
 
     public float getMinutes() {
         return mMinutes;
     }
 
+    public void setMinutes(final float mMinutes) {
+        this.mMinutes = mMinutes;
+    }
+
     public float getSeconds() {
         return mSeconds;
+    }
+
+    public void setSeconds(final float mSeconds) {
+        this.mSeconds = mSeconds;
     }
 
     /**
@@ -57,32 +76,13 @@ public class ErgoClockInstance implements Parcelable {
         this.mSeconds = 0;
     }
 
-    public void setHour(float mHour) {
-        this.mHour = mHour;
-    }
-
-    public void setMinutes(float mMinutes) {
-        this.mMinutes = mMinutes;
-    }
-
-    public void setSeconds(float mSeconds) {
-        this.mSeconds = mSeconds;
-    }
-
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeFloat(mHour);
-        out.writeFloat(mMinutes);
-        out.writeFloat(mSeconds);
-    }
-
     /**
      * Converts Clock Instance to Digital Clock representation
      *
      * @return String representation
      */
     public String getString() {
-        StringBuilder timeBuilder = new StringBuilder();
+        final StringBuilder timeBuilder = new StringBuilder();
         timeBuilder.append(floatToString(mHour, 2));
         timeBuilder.append(":");
         timeBuilder.append(floatToString(mMinutes, 2));
@@ -98,12 +98,12 @@ public class ErgoClockInstance implements Parcelable {
      * @param digits Integer number of digits requested
      * @return String value of the float
      */
-    private String floatToString(float num, int digits) {
+    private String floatToString(final float num, final int digits) {
         // create variable length array of zeros
-        char[] zeros = new char[digits];
+        final char[] zeros = new char[digits];
         Arrays.fill(zeros, '0');
         // format number as String
-        DecimalFormat df = new DecimalFormat(String.valueOf(zeros));
+        final DecimalFormat df = new DecimalFormat(String.valueOf(zeros));
 
         return df.format(num);
     }

@@ -5,36 +5,40 @@ import android.app.Activity;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.managers.ErgoAlarmManager;
+import com.michaelfotiadis.deskalarm.common.base.core.ErgoAlarmManager;
+import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
-public class ToastUtils {
+public class ToastHelper {
 
-    private static final String TAG = "TOAST UTILITIES";
-
+    private final Activity mActivity;
+    private final PreferenceHandler mPreferenceHandler;
     private SuperActivityToast mSuperActivityToast;
+
+    public ToastHelper(final Activity activity) {
+        this.mActivity = activity;
+        this.mPreferenceHandler = new PreferenceHandler(activity);
+    }
+
+    public SuperActivityToast getToast() {
+        return mSuperActivityToast;
+    }
 
     /**
      * Method for dismissing all active toasts
      */
     public void dismissActiveToasts() {
-        Logger.d(TAG, "Dismissing Toasts");
+        AppLog.d("Dismissing Toasts");
         if (mSuperActivityToast != null) {
             SuperActivityToast.cancelAllSuperToasts();
         }
     }
 
-    /**
-     * Method for creating and showing an info toast
-     *
-     * @param activity
-     * @param message
-     * @return
-     */
-    public SuperActivityToast makeInfoToast(final Activity activity, final String message) {
+    public void makeInfoToast(final String message) {
         dismissActiveToasts();
-        Logger.d(TAG, "Making Info Toast");
+        AppLog.d("Making Info Toast");
 
-        mSuperActivityToast = new SuperActivityToast(activity, Style.TYPE_STANDARD);
+        mSuperActivityToast = new SuperActivityToast(mActivity, Style.TYPE_STANDARD);
 
         mSuperActivityToast.setAnimations(Style.ANIMATIONS_FADE);
         mSuperActivityToast.setDuration(Style.DURATION_SHORT);
@@ -43,21 +47,13 @@ public class ToastUtils {
         mSuperActivityToast.setTextSize(Style.TEXTSIZE_MEDIUM);
         mSuperActivityToast.setTouchToDismiss(true);
         mSuperActivityToast.show();
-        return mSuperActivityToast;
     }
 
-    /**
-     * Method for creating and showing an info toast
-     *
-     * @param activity
-     * @param message
-     * @return
-     */
-    public SuperActivityToast makeInfoToast(final Activity activity, final String message, final int color) {
+    public SuperActivityToast makeInfoToast(final String message, final int color) {
         dismissActiveToasts();
-        Logger.d(TAG, "Making Info Toast");
+        AppLog.d("Making Info Toast");
 
-        mSuperActivityToast = new SuperActivityToast(activity, Style.TYPE_STANDARD);
+        mSuperActivityToast = new SuperActivityToast(mActivity, Style.TYPE_STANDARD);
 
         mSuperActivityToast.setAnimations(Style.ANIMATIONS_FADE);
         mSuperActivityToast.setDuration(Style.DURATION_SHORT);
@@ -78,7 +74,7 @@ public class ToastUtils {
      */
     public SuperActivityToast makeProgressToast(final Activity activity, final String message) {
         dismissActiveToasts();
-        Logger.d(TAG, "Making Progress Toast");
+        AppLog.d("Making Progress Toast");
 
         mSuperActivityToast = new SuperActivityToast(activity, Style.TYPE_PROGRESS_CIRCLE);
 
@@ -96,15 +92,14 @@ public class ToastUtils {
     /**
      * Method for creating and showing a warning toast
      *
-     * @param activity
      * @param message
      * @return
      */
-    public SuperActivityToast makeWarningToast(final Activity activity, final String message) {
+    public SuperActivityToast makeWarningToast(final String message) {
         dismissActiveToasts();
-        Logger.d(TAG, "Making Warning Toast");
+        AppLog.d("Making Warning Toast");
 
-        mSuperActivityToast = new SuperActivityToast(activity, Style.TYPE_STANDARD);
+        mSuperActivityToast = new SuperActivityToast(mActivity, Style.TYPE_STANDARD);
 
         mSuperActivityToast.setAnimations(Style.ANIMATIONS_FADE);
         mSuperActivityToast.setDuration(Style.DURATION_SHORT);
@@ -122,37 +117,41 @@ public class ToastUtils {
      *
      * @param mode enumerator
      */
-    public SuperActivityToast makeToast(final Activity activity, final ErgoAlarmManager.ALARM_MODE mode) {
+    public void makeToast(final ErgoAlarmManager.ALARM_MODE mode) {
         if (mSuperActivityToast != null && mSuperActivityToast.isShowing()) {
             SuperActivityToast.cancelAllSuperToasts();
-            ;
+
             mSuperActivityToast.dismiss();
         }
 
         switch (mode) {
             case NORMAL:
-                final int interval = new AppUtils().getAppSharedPreferences(activity).getInt(
-                        activity.getString(R.string.pref_alarm_interval_key), 1);
-                mSuperActivityToast = new ToastUtils().makeInfoToast(activity, "Alarm set for " +
-                                PrimitiveConversions.getTimeStringFromSeconds(interval * 60) + " from now",
+                final int interval = mPreferenceHandler.getAppSharedPreferences().getInt(
+                        mActivity.getString(R.string.pref_alarm_interval_key), 1);
+                makeInfoToast(String.format(
+                        "Alarm set for %s from now",
+                        PrimitiveConversions.getTimeStringFromSeconds(interval * 60)),
                         Style.purple().color);
                 break;
             case REPEAT:
                 // get the stored value from shared preferences
-                final int alarmDuration = new AppUtils().getAppSharedPreferences(activity).getInt(
-                        activity.getString(R.string.pref_alarm_interval_key), 1);
+                final int alarmDuration = mPreferenceHandler.getAppSharedPreferences().getInt(
+                        mActivity.getString(R.string.pref_alarm_interval_key), 1);
                 // make a card toast
-                mSuperActivityToast = new ToastUtils().makeInfoToast(activity, "Repeating for " +
-                                PrimitiveConversions.getTimeStringFromSeconds(alarmDuration * 60) + " from now",
+                makeInfoToast(String.format(
+                        "Repeating for %s from now",
+                        PrimitiveConversions.getTimeStringFromSeconds(alarmDuration * 60)),
                         Style.green().color);
                 break;
             case SNOOZE:
                 // get the stored value from shared preferences
-                final int snoozeDuration = new AppUtils().getAppSharedPreferences(activity).getInt(
-                        activity.getString(R.string.pref_snooze_interval_key), 1);
+                final int snoozeDuration = mPreferenceHandler.getAppSharedPreferences().getInt(
+                        mActivity.getString(R.string.pref_snooze_interval_key), 1);
                 // make a card toast
-                mSuperActivityToast = new ToastUtils().makeInfoToast(activity, "Snoozing for " +
-                                PrimitiveConversions.getTimeStringFromSeconds(snoozeDuration * 60) + " from now",
+                mSuperActivityToast = makeInfoToast(
+                        String.format(
+                                "Snoozing for %s from now",
+                                PrimitiveConversions.getTimeStringFromSeconds(snoozeDuration * 60)),
                         Style.orange().color);
                 break;
             case AUTO:
@@ -160,7 +159,6 @@ public class ToastUtils {
             default:
                 break;
         }
-        return mSuperActivityToast;
     }
 
 }
