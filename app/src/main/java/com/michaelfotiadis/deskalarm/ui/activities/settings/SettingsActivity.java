@@ -45,12 +45,9 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void checkForAccelerometer() {
         final PackageManager PM = this.getPackageManager();
-        final boolean hasStepDetector = PM
-                .hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_DETECTOR);
-        final boolean hasStepCounter = PM
-                .hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_COUNTER);
-        final boolean hasAccelerometer = PM
-                .hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
+        final boolean hasStepDetector = PM.hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_DETECTOR);
+        final boolean hasStepCounter = PM.hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_COUNTER);
+        final boolean hasAccelerometer = PM.hasSystemFeature(PackageManager.FEATURE_SENSOR_ACCELEROMETER);
 
         // if any of the detectors is absent, open a dialog that will terminate
         // the application
@@ -68,28 +65,14 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-
-        // switch activity theme according to settings
-        getPreferenceHandler().changeAppTheme();
-
         super.onCreate(savedInstanceState);
 
         // Set the action bar up
         setDisplayHomeAsUpEnabled(true);
+        setTitle(R.string.settings);
         AppLog.d("Starting Settings Fragment");
 
-        addContentFragmentIfMissing(SettingsFragment.newInstance(), android.R.id.content, FRAGMENT_TAG);
-    }
-
-    @Override
-    protected void onDestroy() {
-        // TODO Auto-generated method stub
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
+        addContentFragmentIfMissing(SettingsFragment.newInstance(), R.id.content_frame, FRAGMENT_TAG);
     }
 
     @Override

@@ -10,5 +10,6 @@
     <dimen name="digital_clock_font_size">14sp</dimen>
     <dimen name="padding">50dp</dimen>
     <dimen name="zoom_button_padding">10sp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
 
 </resources>

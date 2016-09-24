@@ -29,5 +29,7 @@
 
         <item name="android:colorButtonNormal">@color/primary_light</item>
 
+        <item name="preferenceTheme">@style/AppTheme.PreferenceTheme</item>
+
     </style>
 </resources>

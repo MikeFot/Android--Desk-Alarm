@@ -26,6 +26,14 @@
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
         <item name="popupMenuStyle">@style/Widget.AppCompat.Light.PopupMenu</item>
 
+        <item name="preferenceTheme">@style/AppTheme.PreferenceTheme</item>
+
+    </style>
+
+    <style name="AppTheme.PreferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="android:textColorPrimary">@color/text</item>
+        <item name="android:textColorSecondary">@color/secondary_text</item>
+        <item name="android:textColorTertiary">@color/text</item>
     </style>
 
     <style name="DigitalClockTextView" parent="android:Widget.TextView">
