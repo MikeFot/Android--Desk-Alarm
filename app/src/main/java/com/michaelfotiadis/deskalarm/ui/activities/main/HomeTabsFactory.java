@@ -34,8 +34,7 @@ import com.michaelfotiadis.deskalarm.ui.fragments.GraphFragment;
         return new SmartFragmentPagerPage.Builder()
                 .withNavBarTitle(title)
                 .withTabIcon(R.drawable.ic_access_time_black)
-                .withFragment(ClockFragment.newInstance())
-                .withTabTitle(title).build();
+                .withFragment(ClockFragment.newInstance()).build();
     }
 
     private static SmartFragmentPagerPage getGraphPage(final String title) {
@@ -43,8 +42,7 @@ import com.michaelfotiadis.deskalarm.ui.fragments.GraphFragment;
         return new SmartFragmentPagerPage.Builder()
                 .withNavBarTitle(title)
                 .withTabIcon(R.drawable.ic_timeline_black_24dp)
-                .withFragment(GraphFragment.newInstance())
-                .withTabTitle(title).build();
+                .withFragment(GraphFragment.newInstance()).build();
     }
 
 }

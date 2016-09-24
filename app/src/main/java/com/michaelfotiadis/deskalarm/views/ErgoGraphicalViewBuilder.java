@@ -121,7 +121,7 @@ public class ErgoGraphicalViewBuilder {
 
         // default theme value should be "Dark", so use colours that contrast nicely
         if (themeKey.equals(defaultThemeValue)) {
-            mRenderer.setMarginsColor(context.getResources().getColor(R.color.background_holo_dark));
+            mRenderer.setMarginsColor(context.getResources().getColor(R.color.md_grey_600));
             mRenderer.setBackgroundColor(Color.GRAY);
             mRenderer.setAxesColor(Color.LTGRAY);
             mRenderer.setGridColor(Color.GRAY);
@@ -130,8 +130,8 @@ public class ErgoGraphicalViewBuilder {
             mRenderer.setLabelsColor(Color.WHITE);
 
             // get colours from resources
-            mColorGradientStart = context.getResources().getColor(R.color.holo_green_light);
-            mColorGradientStop = context.getResources().getColor(R.color.holo_orange_light);
+            mColorGradientStart = context.getResources().getColor(R.color.md_green_400);
+            mColorGradientStop = context.getResources().getColor(R.color.md_orange_300);
 
             // set renderer colours
             xyRenderer.setColor(mColorGradientStart);
@@ -139,7 +139,7 @@ public class ErgoGraphicalViewBuilder {
             xyRenderer.setGradientStop(mGradientLimit, mColorGradientStop);
         } else {
             // handle "Light" theme
-            mRenderer.setMarginsColor(context.getResources().getColor(R.color.background_holo_light));
+            mRenderer.setMarginsColor(context.getResources().getColor(R.color.md_grey_200));
             mRenderer.setBackgroundColor(Color.DKGRAY);
             mRenderer.setAxesColor(Color.DKGRAY);
             mRenderer.setGridColor(Color.DKGRAY);
@@ -148,8 +148,8 @@ public class ErgoGraphicalViewBuilder {
             mRenderer.setLabelsColor(Color.BLACK);
 
             // get colours from resources
-            mColorGradientStart = context.getResources().getColor(R.color.holo_green_dark);
-            mColorGradientStop = context.getResources().getColor(R.color.holo_orange_dark);
+            mColorGradientStart = context.getResources().getColor(R.color.md_green_400);
+            mColorGradientStop = context.getResources().getColor(R.color.md_orange_300);
 
             // set renderer colours
             xyRenderer.setColor(mColorGradientStart);

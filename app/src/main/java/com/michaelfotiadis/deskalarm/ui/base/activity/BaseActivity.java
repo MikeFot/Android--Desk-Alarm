@@ -37,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Core {
         if (getLayoutResource() != NO_LAYOUT) {
             AppLog.d("On Create with layout resource " + getLayoutResource());
             setContentView(getLayoutResource());
-            // setupActionBar();
+            setupActionBar();
 
             final CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
             if (coordinatorLayout != null) {

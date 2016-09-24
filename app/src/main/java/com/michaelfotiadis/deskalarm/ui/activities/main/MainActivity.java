@@ -64,7 +64,6 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         // switch activity theme according to settings
-        getPreferenceHandler().changeAppTheme();
         super.onCreate(savedInstanceState);
         AppLog.d("OnCreate");
         ButterKnife.bind(this);

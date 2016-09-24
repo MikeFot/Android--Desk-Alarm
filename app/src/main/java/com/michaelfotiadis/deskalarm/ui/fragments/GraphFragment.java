@@ -191,9 +191,9 @@ public class GraphFragment extends BaseFragment implements OnClickListener {
             }
 
             if (series_selection.getValue() <= threshold) {
-                textColour = getResources().getColor(R.color.holo_green_dark);
+                textColour = getResources().getColor(R.color.graph_green);
             } else {
-                textColour = getResources().getColor(R.color.holo_orange_dark);
+                textColour = getResources().getColor(R.color.graph_orange);
             }
             mInformationTextView.setTextColor(textColour);
             mInformationTextView.setText(sb.toString());

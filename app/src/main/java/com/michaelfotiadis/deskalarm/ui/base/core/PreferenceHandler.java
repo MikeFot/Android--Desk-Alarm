@@ -32,11 +32,11 @@ public class PreferenceHandler {
         // get the stored value
         final String themeKey = getAppSharedPreferences().getString(mContext.getString(R.string.pref_theme_key), defaultThemeValue);
 
-        if (themeKey.equals(defaultThemeValue)) {
-            mContext.setTheme(R.style.AppTheme);
-        } else {
-            mContext.setTheme(R.style.AppLightTheme);
-        }
+//        if (themeKey.equals(defaultThemeValue)) {
+//            mContext.setTheme(R.style.AppTheme);
+//        } else {
+//            mContext.setTheme(R.style.AppLightTheme);
+//        }
         AppLog.d("Theme changed to " + themeKey);
     }
 

@@ -16,7 +16,7 @@ import com.michaelfotiadis.deskalarm.R;
  *
  */
 public final class SmartFragmentPagerBinder {
-    private static final int TAB_SELECTED_COLOR_ID = R.color.md_blue_grey_500;
+    private static final int TAB_SELECTED_COLOR_ID = R.color.primary_light;
 
     private final NavBarTitleNeedsChangingListener callback;
     private final boolean isLollipop;
@@ -51,13 +51,18 @@ public final class SmartFragmentPagerBinder {
             public void run() {
                 tabLayout.setupWithViewPager(pager);
 
+                final int iconColor = ContextCompat.getColor(pager.getContext(), R.color.icons);
+
                 final int icons[] = pages.getIcons();
 
                 for (int i = 0; i < tabLayout.getTabCount(); i++) {
                     final int resId = icons[i];
                     if (resId > 0) {
+                        Drawable drawable = ContextCompat.getDrawable(pager.getContext(), resId);
+                        DrawableCompat.setTint(drawable, iconColor);
+
                         //noinspection ConstantConditions
-                        tabLayout.getTabAt(i).setIcon(resId);
+                        tabLayout.getTabAt(i).setIcon(drawable);
                     }
                 }
 
