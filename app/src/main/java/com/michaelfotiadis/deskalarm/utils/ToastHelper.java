@@ -5,8 +5,8 @@ import android.app.Activity;
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.common.base.core.ErgoAlarmManager;
-import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager;
+import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class ToastHelper {

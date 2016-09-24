@@ -7,9 +7,9 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.common.base.core.ErgoDataManager;
-import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.containers.ErgoTimeDataInstance;
+import com.michaelfotiadis.deskalarm.ui.base.core.ErgoDataManager;
+import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;

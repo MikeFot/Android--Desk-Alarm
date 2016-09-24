@@ -3,11 +3,12 @@ package com.michaelfotiadis.deskalarm.services;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.michaelfotiadis.deskalarm.common.base.core.Core;
-import com.michaelfotiadis.deskalarm.common.base.core.CoreProvider;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.model.Payloads;
 import com.michaelfotiadis.deskalarm.model.Requests;
+import com.michaelfotiadis.deskalarm.services.step.ErgoStepService;
+import com.michaelfotiadis.deskalarm.ui.base.core.Core;
+import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class ErgoAlarmService extends IntentService {

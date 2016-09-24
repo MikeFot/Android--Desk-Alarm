@@ -8,9 +8,9 @@ import android.support.annotation.NonNull;
 import android.view.WindowManager;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
-import com.michaelfotiadis.deskalarm.common.base.dialog.AlertDialogFactory;
-import com.michaelfotiadis.deskalarm.common.base.dialog.BaseDialogFragment;
+import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.dialog.AlertDialogFactory;
+import com.michaelfotiadis.deskalarm.ui.base.dialog.BaseDialogFragment;
 
 /**
  * Class extending DialogFragment. Stores Alarm Time to SharedPreferences.

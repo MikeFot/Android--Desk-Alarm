@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.TabLayout">
+    </style>
+
+    <style name="AppTheme.TabLayout.Scrollable" parent="AppTheme.TabLayout">
+        <item name="tabMode">scrollable</item>
+    </style>
+
+    <style name="AppTheme.TabLayout.Fixed" parent="AppTheme.TabLayout">
+        <item name="tabMode">fixed</item>
+    </style>
+</resources>

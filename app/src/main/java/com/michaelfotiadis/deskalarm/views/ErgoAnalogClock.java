@@ -12,8 +12,8 @@ import android.view.View;
 import android.widget.RemoteViews.RemoteView;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.common.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.containers.ErgoClockInstance;
+import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;

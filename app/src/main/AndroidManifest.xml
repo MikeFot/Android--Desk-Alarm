@@ -13,13 +13,13 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
-        android:name=".MyApplication"
+        android:name=".DeskAlarmApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <service
-            android:name=".services.ErgoStepService"
+            android:name=".services.step.ErgoStepService"
             android:enabled="true"
             android:exported="false"/>
         <service
@@ -32,7 +32,7 @@
             android:exported="false"/>
 
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".ui.activities.main.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -40,9 +40,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.SettingsActivity"
+            android:name=".ui.activities.settings.SettingsActivity"
             android:label="@string/title_activity_preference"
-            android:parentActivityName=".activities.MainActivity"/>
+            android:parentActivityName=".ui.activities.main.MainActivity"/>
     </application>
 
 </manifest>

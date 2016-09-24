@@ -7,8 +7,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.common.base.core.Core;
-import com.michaelfotiadis.deskalarm.common.base.core.CoreProvider;
+import com.michaelfotiadis.deskalarm.ui.base.core.Core;
+import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class ErgoAudioService extends IntentService {

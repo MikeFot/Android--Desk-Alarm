@@ -59,12 +59,6 @@ public class FileHelper {
         } catch (final IOException e) {
             AppLog.i(String.format("Exception Writing File: %s", e));
             return false;
-        } finally {
-            try {
-                mFosOut.close();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -127,12 +121,6 @@ public class FileHelper {
             inputStreamReader.close();
         } catch (final IOException e) {
             AppLog.i(String.format("Exception Parsing File: %s", e));
-        } finally {
-            try {
-                mFosIn.close();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -165,12 +153,6 @@ public class FileHelper {
         } catch (final IOException e) {
             AppLog.i(String.format("Exception Reading File: %s", e));
             return null;
-        } finally {
-            try {
-                mFosIn.close();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 

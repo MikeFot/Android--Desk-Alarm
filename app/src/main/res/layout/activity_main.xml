@@ -3,7 +3,7 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <com.michaelfotiadis.deskalarm.adapters.CustomViewPager
+    <com.michaelfotiadis.deskalarm.ui.adapters.CustomViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

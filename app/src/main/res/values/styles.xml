@@ -1,31 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppBaseTheme" parent="Theme.AppCompat">
+
+    <style name="AppBaseTheme" parent="Theme.AppCompat.NoActionBar">
     </style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat">
-        <item name="android:actionBarStyle">@style/ActionBarDark</item>
+    <style name="AppTheme" parent="AppBaseTheme">
         <item name="theme_dependent_icon">@drawable/ic_action_settings_light</item>
         <item name="theme_dependent_layout_color">@color/background_holo_dark</item>
     </style>
 
     <!-- Application theme. -->
-    <style name="AppLightTheme" parent="Theme.AppCompat.Light">
-        <item name="android:actionBarStyle">@style/ActionBarLight</item>
+    <style name="AppLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="theme_dependent_icon">@drawable/ic_action_settings_dark</item>
         <item name="theme_dependent_layout_color">@color/background_holo_light</item>
     </style>
 
-    <style name="ActionBarDark" parent="android:Widget.Holo.Light.ActionBar">
-        <!-- <item name="android:background">@color/holo_green_dark</item> -->
-    </style>
-
-    <style name="ActionBarLight" parent="android:Widget.Holo.Light.ActionBar">
-        <!-- <item name="android:background">@color/holo_orange_dark</item> -->
-    </style>
-
-    <style name="DigitalClockTextView" parent="android:Widget.Holo.Light.TextView">
+    <style name="DigitalClockTextView" parent="android:Widget.TextView">
         <item name="android:textSize">30sp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:ellipsize">none</item>
