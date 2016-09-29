@@ -22,7 +22,6 @@ import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager.ALARM_MODE;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
-import java.util.Calendar;
 import java.util.Locale;
 
 
@@ -54,12 +53,9 @@ public class ErgoStepService extends IntentService implements SensorEventListene
     private BroadcastReceiver mReceiver;
     // Wake Lock fields
     private WakeLock mWakeLock;
-    // Variables
-    private int stepCount = 0;
-    private int timesIdle = 0;
-    private long mStepValue;
-    private long mTimeOfLastStep = 0;
-    private long mTimeStepInterval = Long.MAX_VALUE;
+
+    private final StepModel mModel;
+
 
     /**
      * Main constructor
@@ -67,6 +63,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
     public ErgoStepService() {
         super("StepService");
         mCore = new CoreProvider(this);
+        mModel = new StepModel();
     }
 
     public static boolean isServiceRunning() {
@@ -133,22 +130,22 @@ public class ErgoStepService extends IntentService implements SensorEventListene
 
         if (sensor.getType() == Sensor.TYPE_STEP_COUNTER && isServiceRunning()) {
             // calculate how long has passed since the last step
-            mTimeStepInterval = Calendar.getInstance().getTimeInMillis() - mTimeOfLastStep;
+            mModel.updateTimeStepInterval();
 
-            if (value > mStepValue) {
+            if (value > mModel.getStepValue()) {
                 // compare time passed since last step with minimum time between steps
-                if (mTimeStepInterval < MINIMUM_TIME_BETWEEN_STEPS) {
-                    stepCount++;
-                    AppLog.d("TYPE_STEP_COUNTER " + value + " at an interval of " + mTimeStepInterval);
+                if (mModel.getTimeStepInterval() < MINIMUM_TIME_BETWEEN_STEPS) {
+                    mModel.incrementStepCount();
+                    AppLog.d(String.format(Locale.UK, "TYPE_STEP_COUNTER %d at an interval of %d", value, mModel.getTimeStepInterval()));
                     mCore.getAlarmManager().setAlarm(ALARM_MODE.AUTO);
-                    mStepValue = value;
+                    mModel.setStepValue(value);
                 } else {
                     AppLog.i("Steps Not Far Apart Enough");
                 }
             } else {
                 AppLog.i("Repeating Step Event");
             }
-            mTimeOfLastStep = Calendar.getInstance().getTimeInMillis();
+            mModel.setTimeOfLastStep(System.currentTimeMillis());
         } else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
             // Same Sensor but always transmits -1
         }
@@ -224,7 +221,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
             while (isServiceRunning()) {
                 try {
                     // Zero the counter
-                    stepCount = 0;
+                    mModel.resetStepCount();
 
                     acquireWakeLock();
                     registerSensorListeners();
@@ -239,16 +236,15 @@ public class ErgoStepService extends IntentService implements SensorEventListene
                     long waitTime = 0;
 
                     // Broadcast that the phone has not moved
-                    if (stepCount == 0) {
-                        timesIdle++;
-                        broadcastNotificationInt(Broadcasts.IDLE_DETECTED.getString(), timesIdle);
-                        if (timesIdle < maxTimesIdle) {
-                        } else {
-                            timesIdle = maxTimesIdle;
+                    if (mModel.getStepCount() == 0) {
+                        mModel.incrementTimesIdle();
+                        broadcastNotificationInt(Broadcasts.IDLE_DETECTED.getString(), mModel.getTimesIdle());
+                        if (mModel.getTimesIdle() <= maxTimesIdle) {
+                            mModel.setTimesIdle(maxTimesIdle);
                         }
-                        waitTime = SLEEP_TIME * timesIdle;
+                        waitTime = SLEEP_TIME * mModel.getTimesIdle();
                     } else {
-                        timesIdle = 0;
+                        mModel.resetTimesIdle();
                         waitTime = SLEEP_TIME;
                     }
 
@@ -381,7 +377,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
             } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
                 AppLog.i("Screen On");
                 // Reset the counter
-                timesIdle = 0;
+                mModel.resetTimesIdle();
             }
         }
     }
