@@ -54,7 +54,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     private SmartFragmentPagerBinder mBinder;
 
     private Dialog mDialog;
-    private boolean mIsShowDialog = false;
+    private boolean mIsShowingDialog = false;
     private boolean mIsActivityShown = false;
     private ToastHelper mToastHelper;
 
@@ -75,11 +75,11 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         setUpViewPager();
 
         if (savedInstanceState != null) {
-            mIsShowDialog = savedInstanceState.getBoolean(Payloads.PAYLOAD_1.getString());
+            mIsShowingDialog = savedInstanceState.getBoolean(Payloads.PAYLOAD_1.getString());
         } else {
             final Bundle intentBundle = getIntent().getExtras();
             if (intentBundle != null) {
-                mIsShowDialog = intentBundle.getBoolean(Payloads.PAYLOAD_1.getString());
+                mIsShowingDialog = intentBundle.getBoolean(Payloads.PAYLOAD_1.getString());
             }
         }
         AppLog.d("onCreate finished");
@@ -195,7 +195,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     @Override
     protected void onSaveInstanceState(final Bundle outState) {
         // store the state of the alarm dialog
-        outState.putBoolean(Payloads.PAYLOAD_1.getString(), mIsShowDialog);
+        outState.putBoolean(Payloads.PAYLOAD_1.getString(), mIsShowingDialog);
         super.onSaveInstanceState(outState);
     }
 
@@ -216,8 +216,8 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         super.onNewIntent(intent);
         // Read the extras from a new intent
         AppLog.d("Received onNewIntent");
-        mIsShowDialog = getIntent().getBooleanExtra(Payloads.PAYLOAD_1.getString(), false);
-        if (mIsShowDialog) {
+        mIsShowingDialog = getIntent().getBooleanExtra(Payloads.PAYLOAD_1.getString(), false);
+        if (mIsShowingDialog) {
             enableAlarmDialog();
         }
     }
@@ -226,7 +226,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     protected void onResume() {
         registerResponseReceiver();
 
-        if (mIsShowDialog) {
+        if (mIsShowingDialog) {
             enableAlarmDialog();
         }
 
@@ -271,7 +271,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
 
                 // reschedule alarm
                 getAlarmManager().setAlarm(ALARM_MODE.SNOOZE);
-                mIsShowDialog = false;
+                mIsShowingDialog = false;
                 mDialog.dismiss();
                 mDialog = null;
             }
@@ -283,7 +283,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
                 getNotificationManager().cancelAlarmNotification();
                 // TODO there is something wrong here
                 getAlarmManager().setAlarm(ALARM_MODE.REPEAT);
-                mIsShowDialog = false;
+                mIsShowingDialog = false;
                 mDialog.dismiss();
                 mDialog = null;
             }
@@ -303,7 +303,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         // cancel the notification, just in case
         getNotificationManager().cancelAlarmNotification();
 
-        mIsShowDialog = false;
+        mIsShowingDialog = false;
 
         if (mDialog != null) {
             mDialog.dismiss();
@@ -320,7 +320,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
             mDialog = createDialog();
         }
         mDialog.show();
-        mIsShowDialog = true;
+        mIsShowingDialog = true;
     }
 
     /**
@@ -367,7 +367,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
                 if (mIsActivityShown) {
                     enableAlarmDialog();
                 } else {
-                    mIsShowDialog = true;
+                    mIsShowingDialog = true;
                 }
             } else if (action.equalsIgnoreCase(Broadcasts.CLOCK_MODE_CHANGED.getString())) {
                 // display a toast depending on the extra payload

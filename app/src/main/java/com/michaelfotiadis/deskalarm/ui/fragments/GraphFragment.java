@@ -15,7 +15,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.containers.ErgoTimeDataInstance;
+import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.fragment.BaseFragment;
@@ -140,7 +140,7 @@ public class GraphFragment extends BaseFragment implements OnClickListener {
         mChartContainerLayout.addView(mChartView);
 
         // hide the graph if there is no data
-        final SortedMap<String, ErgoTimeDataInstance> data = getDataManager().retrieveDailyData();
+        final SortedMap<String, TimeModelInstance> data = getDataManager().retrieveDailyData();
         if (data.size() == 0) {
             mInformationTextView.setText(R.string.label_no_data_yet);
             mChartView.setVisibility(View.GONE);

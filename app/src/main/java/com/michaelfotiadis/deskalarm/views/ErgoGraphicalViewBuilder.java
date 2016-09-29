@@ -7,7 +7,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.containers.ErgoTimeDataInstance;
+import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoDataManager;
 import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
 
@@ -161,11 +161,11 @@ public class ErgoGraphicalViewBuilder {
         long maxY = Long.MIN_VALUE;
         mSeries = new XYSeries(context.getString(R.string.graph_title));
         // get the data from the data manager
-        final SortedMap<String, ErgoTimeDataInstance> data = dataManager.retrieveDailyData();
+        final SortedMap<String, TimeModelInstance> data = dataManager.retrieveDailyData();
         int i = 0;
         if (data != null) {
             // iterate through the entry set
-            for (final Entry<String, ErgoTimeDataInstance> entry : data.entrySet()) {
+            for (final Entry<String, TimeModelInstance> entry : data.entrySet()) {
                 final String x = entry.getKey();
                 final double y = entry.getValue().getTimeLogged();
 

@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.RemoteViews.RemoteView;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.containers.ErgoClockInstance;
+import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
 import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
@@ -46,7 +46,7 @@ public class ErgoAnalogClock extends View implements ErgoClockInterface {
     private int mShiftedOverlayColor;
     private int mLighterOverlayColor;
     private long mTimeRunning;
-    private final ErgoClockInstance mClockInstance = new ErgoClockInstance();
+    private final ClockModelInstance mClockInstance = new ClockModelInstance();
     private long mStartTime = 0;
     private final Runnable mRunnable = new Runnable() {
         @Override

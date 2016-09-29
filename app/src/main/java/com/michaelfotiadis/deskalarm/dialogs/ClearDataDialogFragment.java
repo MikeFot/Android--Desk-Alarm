@@ -15,10 +15,10 @@ import com.michaelfotiadis.deskalarm.ui.base.dialog.BaseDialogFragment;
  *
  * @author Michael Fotiadis
  */
-public class DialogClearDataFragment extends BaseDialogFragment {
+public class ClearDataDialogFragment extends BaseDialogFragment {
 
     public static BaseDialogFragment newInstance() {
-        return new DialogClearDataFragment();
+        return new ClearDataDialogFragment();
     }
 
     @NonNull

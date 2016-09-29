@@ -17,6 +17,7 @@ import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 
 public final class ErgoAlarmManager {
 
@@ -54,8 +55,8 @@ public final class ErgoAlarmManager {
         }
 
         if (interval > 0) {
-            final long targetTime = Calendar.getInstance().getTimeInMillis() + (interval *
-                    AppConstants.FACTOR_MSEC_TO_MINUTES);
+            final long targetTime = Calendar.getInstance().getTimeInMillis()
+                    + TimeUnit.MILLISECONDS.toMinutes(interval);
             //***
             AppLog.d(String.format("\n\n***\nAlarm is set %s\n***\n",
                     PrimitiveConversions.getDate(targetTime, AppConstants.SIMPLE_DATE_FORMAT_STRING)));
@@ -65,7 +66,6 @@ public final class ErgoAlarmManager {
             AppLog.d(String.format("Alarm time: %s",
                     PrimitiveConversions.getDate(targetTime, AppConstants.SIMPLE_DATE_FORMAT_STRING)));
             //***
-
 
             final Intent intent = new Intent(mContext, ErgoAlarmService.class);
             intent.putExtra(Payloads.ALARM_PAYLOAD.getString(), Requests.REQUEST_CODE_1.getCode());

@@ -17,11 +17,11 @@ import com.michaelfotiadis.deskalarm.ui.base.dialog.BaseDialogFragment;
  *
  * @author Michael Fotiadis
  */
-public class DialogClearPreferencesFragment extends BaseDialogFragment {
+public class ClearPreferencesDialogFragment extends BaseDialogFragment {
 
 
     public static BaseDialogFragment newInstance() {
-        return new DialogClearPreferencesFragment();
+        return new ClearPreferencesDialogFragment();
     }
 
     @NonNull

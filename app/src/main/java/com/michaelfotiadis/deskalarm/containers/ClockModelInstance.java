@@ -6,13 +6,13 @@ import android.os.Parcelable;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 
-public class ErgoClockInstance implements Parcelable {
+public class ClockModelInstance implements Parcelable {
 
     private float mHour;
     private float mMinutes;
     private float mSeconds;
 
-    public ErgoClockInstance() {
+    public ClockModelInstance() {
         // Set all to 0 on initial creation
         this.reset();
     }

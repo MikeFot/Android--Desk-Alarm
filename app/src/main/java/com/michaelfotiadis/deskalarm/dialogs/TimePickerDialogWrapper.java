@@ -39,8 +39,7 @@ public class TimePickerDialogWrapper implements TimePickerDialog.OnTimeSetListen
         }
 
         // get a 24 hour time picker
-        mDialog = new TimePickerDialog(activity, this, hour, minute, true);
-
+        mDialog = new TimePickerDialog(activity, this, hour, minute, false);
         mDialog.setTitle(activity.getString(R.string.dialog_set_interval_between_alarms));
 
     }

@@ -2,9 +2,8 @@ package com.michaelfotiadis.deskalarm.utils;
 
 import android.content.Context;
 
-import com.michaelfotiadis.deskalarm.constants.AppConstants;
-import com.michaelfotiadis.deskalarm.constants.Singleton;
-import com.michaelfotiadis.deskalarm.containers.ErgoTimeDataInstance;
+import com.michaelfotiadis.deskalarm.constants.DataStorage;
+import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.io.BufferedReader;
@@ -16,6 +15,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class FileHelper {
+
+    // path of the internal storage file
+    private static final String INTERNAL_STORAGE_FILE = "user_data";
 
     private final Context mContext;
 
@@ -42,12 +44,12 @@ public class FileHelper {
     }
 
     public boolean deleteSettingsFile() {
-        return new File(AppConstants.INTERNAL_STORAGE_FILE).delete();
+        return new File(INTERNAL_STORAGE_FILE).delete();
     }
 
     public boolean writeToSettingsFile(final String data) {
         try {
-            mFosOut = mContext.getApplicationContext().openFileOutput(AppConstants.INTERNAL_STORAGE_FILE,
+            mFosOut = mContext.getApplicationContext().openFileOutput(INTERNAL_STORAGE_FILE,
                     Context.MODE_APPEND);
             mFosOut.write(data.getBytes());
 
@@ -64,7 +66,7 @@ public class FileHelper {
 
     public boolean clearSettingsFile() {
         try {
-            mFosOut = mContext.getApplicationContext().openFileOutput(AppConstants.INTERNAL_STORAGE_FILE,
+            mFosOut = mContext.getApplicationContext().openFileOutput(INTERNAL_STORAGE_FILE,
                     Context.MODE_PRIVATE);
             mFosOut.write("".getBytes());
             AppLog.i("Successfully Cleared Data File");
@@ -86,10 +88,10 @@ public class FileHelper {
 
     public void parseFromFileByLine() {
         try {
-            AppLog.i("Opening Config File " + AppConstants.INTERNAL_STORAGE_FILE);
+            AppLog.i("Opening Config File " + INTERNAL_STORAGE_FILE);
 
             // Open the file
-            mFosIn = mContext.getApplicationContext().openFileInput(AppConstants.INTERNAL_STORAGE_FILE);
+            mFosIn = mContext.getApplicationContext().openFileInput(INTERNAL_STORAGE_FILE);
             // Create an InputStream
             final InputStreamReader inputStreamReader = new InputStreamReader(mFosIn);
 
@@ -107,11 +109,11 @@ public class FileHelper {
                     final int timeElapsed = PrimitiveConversions.tryInteger(dataLine[1], 0);
 
                     if (timeLogged > 0 && timeElapsed > 0) {
-                        // create a new ErgoTimeDataInstance
-                        final ErgoTimeDataInstance dataInstance = new ErgoTimeDataInstance(
+                        // create a new TimeModelInstance
+                        final TimeModelInstance dataInstance = new TimeModelInstance(
                                 timeLogged, timeElapsed);
                         // add to memory
-                        Singleton.getInstance().addToUsageData(mContext.getApplicationContext(),
+                        DataStorage.getInstance().addToUsageData(mContext.getApplicationContext(),
                                 dataInstance);
                         AppLog.i("Parsed: " + dataInstance.toOutputString());
                     }
@@ -126,10 +128,10 @@ public class FileHelper {
 
     private String readFromSettingsFile() {
         try {
-            AppLog.i(String.format("Opening Config File %s", AppConstants.INTERNAL_STORAGE_FILE));
+            AppLog.i(String.format("Opening Config File %s", INTERNAL_STORAGE_FILE));
 
             // Open the file
-            mFosIn = mContext.getApplicationContext().openFileInput(AppConstants.INTERNAL_STORAGE_FILE);
+            mFosIn = mContext.getApplicationContext().openFileInput(INTERNAL_STORAGE_FILE);
             // Create an InputStream
             final InputStreamReader inputStreamReader = new InputStreamReader(mFosIn);
 

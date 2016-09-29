@@ -6,30 +6,31 @@ import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Custom Object for storing data related to logged time
  *
  * @author Michael Fotiadis
  */
-public class ErgoTimeDataInstance {
-    private final int mTimeElapsed;
+public class TimeModelInstance {
+    private final long mTimeElapsed;
     private final Calendar mCalendarLogged;
 
-    public ErgoTimeDataInstance(final long timeStarted) {
+    public TimeModelInstance(final long timeStarted) {
         final Long currentTime = Calendar.getInstance().getTimeInMillis();
         mCalendarLogged = Calendar.getInstance();
-        mTimeElapsed = (int) ((currentTime - timeStarted) / AppConstants.FACTOR_MSEC_TO_MINUTES);
+        mTimeElapsed = TimeUnit.MILLISECONDS.toMinutes(currentTime - timeStarted);
     }
 
-    public ErgoTimeDataInstance(final long timeLogged, final long timeElapsed) {
+    public TimeModelInstance(final long timeLogged, final long timeElapsed) {
 
         mCalendarLogged = Calendar.getInstance();
         mCalendarLogged.setTimeInMillis(timeLogged);
         mTimeElapsed = (int) timeElapsed;
     }
 
-    public ErgoTimeDataInstance(final int timeElapsed, final Calendar calendarLogged) {
+    public TimeModelInstance(final int timeElapsed, final Calendar calendarLogged) {
         mTimeElapsed = timeElapsed;
         mCalendarLogged = calendarLogged;
     }
@@ -72,7 +73,7 @@ public class ErgoTimeDataInstance {
         sb.append(',');
         sb.append(mTimeElapsed);
         // add a line separator
-        sb.append(AppConstants.LINE_SEPARATOR);
+        sb.append(System.getProperty("line.separator"));
 
         return sb.toString();
     }
