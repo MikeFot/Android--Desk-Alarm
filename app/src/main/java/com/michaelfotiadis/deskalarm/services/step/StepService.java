@@ -25,42 +25,32 @@ import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 import java.util.Locale;
 
 
-public class ErgoStepService extends IntentService implements SensorEventListener {
+public class StepService extends IntentService implements SensorEventListener {
 
-    private static final String TAG = ErgoStepService.class.getSimpleName();
-
-    private final Core mCore;
-
-    private static boolean sIsServiceRunning = false;
+    private static final String TAG = StepService.class.getSimpleName();
     // Thread fields
-    private final long THREAD_WAIT_TIME_SHORT = 1000;
-    private final long THREAD_WAIT_TIME_LONG = 5000;
-
-
-    private final int maxTimesIdle = 15;
-    private final int MINIMUM_TIME_BETWEEN_STEPS = 10000;
-
-
+    private static final long THREAD_WAIT_TIME_SHORT = 1000;
+    private static final long THREAD_WAIT_TIME_LONG = 5000;
+    private static final int maxTimesIdle = 15;
+    private static final int MINIMUM_TIME_BETWEEN_STEPS = 10000;
+    private static boolean sIsServiceRunning = false;
+    private final Core mCore;
+    private final StepModel mModel;
     private FLAGS mFlag;
     // Sensor fields
     private SensorManager mSensorManager;
-
     private Sensor mStepCounterSensor;
-
     private Sensor mStepDetectorSensor;
-
     // Receiver fields
     private BroadcastReceiver mReceiver;
     // Wake Lock fields
     private WakeLock mWakeLock;
 
-    private final StepModel mModel;
-
 
     /**
      * Main constructor
      */
-    public ErgoStepService() {
+    public StepService() {
         super("StepService");
         mCore = new CoreProvider(this);
         mModel = new StepModel();
@@ -71,7 +61,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
     }
 
     public static void setServiceRunning(final boolean isServiceRunning) {
-        ErgoStepService.sIsServiceRunning = isServiceRunning;
+        StepService.sIsServiceRunning = isServiceRunning;
     }
 
     @Override
@@ -146,8 +136,6 @@ public class ErgoStepService extends IntentService implements SensorEventListene
                 AppLog.i("Repeating Step Event");
             }
             mModel.setTimeOfLastStep(System.currentTimeMillis());
-        } else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
-            // Same Sensor but always transmits -1
         }
     }
 
@@ -209,12 +197,12 @@ public class ErgoStepService extends IntentService implements SensorEventListene
     private void processAutomaticMode() {
 
 
-        final long SLEEP_TIME;
+        final long sleepTime;
 
         if (mFlag == FLAGS.LOW_ACCURACY) {
-            SLEEP_TIME = THREAD_WAIT_TIME_SHORT;
+            sleepTime = THREAD_WAIT_TIME_SHORT;
         } else {
-            SLEEP_TIME = 0;
+            sleepTime = 0;
         }
 
         synchronized (this) {
@@ -233,20 +221,7 @@ public class ErgoStepService extends IntentService implements SensorEventListene
                     releaseWakeLock();
                     unregisterSensorListeners();
 
-                    long waitTime = 0;
-
-                    // Broadcast that the phone has not moved
-                    if (mModel.getStepCount() == 0) {
-                        mModel.incrementTimesIdle();
-                        broadcastNotificationInt(Broadcasts.IDLE_DETECTED.getString(), mModel.getTimesIdle());
-                        if (mModel.getTimesIdle() <= maxTimesIdle) {
-                            mModel.setTimesIdle(maxTimesIdle);
-                        }
-                        waitTime = SLEEP_TIME * mModel.getTimesIdle();
-                    } else {
-                        mModel.resetTimesIdle();
-                        waitTime = SLEEP_TIME;
-                    }
+                    final long waitTime = getWaitTime(sleepTime);
 
                     if (waitTime > 0) {
                         AppLog.d("Waiting for : " + waitTime);
@@ -260,6 +235,23 @@ public class ErgoStepService extends IntentService implements SensorEventListene
                 }
             }
         }
+    }
+
+    private long getWaitTime(final long sleepTime) {
+        final long waitTime;
+        // Broadcast that the phone has not moved
+        if (mModel.getStepCount() == 0) {
+            mModel.incrementTimesIdle();
+            broadcastNotificationInt(Broadcasts.IDLE_DETECTED.getString(), mModel.getTimesIdle());
+            if (mModel.getTimesIdle() <= maxTimesIdle) {
+                mModel.setTimesIdle(maxTimesIdle);
+            }
+            waitTime = sleepTime * mModel.getTimesIdle();
+        } else {
+            mModel.resetTimesIdle();
+            waitTime = sleepTime;
+        }
+        return waitTime;
     }
 
     /**

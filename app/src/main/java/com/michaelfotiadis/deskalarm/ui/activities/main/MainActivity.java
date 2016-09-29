@@ -24,7 +24,7 @@ import android.widget.Switch;
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.model.Payloads;
-import com.michaelfotiadis.deskalarm.services.step.ErgoStepService;
+import com.michaelfotiadis.deskalarm.services.step.StepService;
 import com.michaelfotiadis.deskalarm.ui.activities.settings.SettingsActivity;
 import com.michaelfotiadis.deskalarm.ui.base.activity.BaseActivity;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager.ALARM_MODE;
@@ -123,7 +123,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         // Set up the Switch Button
         final MenuItem switchMenuItem = menu.getItem(0);
         mSwitchButton = (Switch) switchMenuItem.getActionView().findViewById(R.id.switchForActionBar);
-        mSwitchButton.setChecked(ErgoStepService.isServiceRunning());
+        mSwitchButton.setChecked(StepService.isServiceRunning());
         mSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

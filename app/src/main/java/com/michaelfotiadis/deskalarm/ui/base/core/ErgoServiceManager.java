@@ -3,8 +3,8 @@ package com.michaelfotiadis.deskalarm.ui.base.core;
 import android.content.Context;
 import android.content.Intent;
 
-import com.michaelfotiadis.deskalarm.services.ErgoAudioService;
-import com.michaelfotiadis.deskalarm.services.step.ErgoStepService;
+import com.michaelfotiadis.deskalarm.services.AudioService;
+import com.michaelfotiadis.deskalarm.services.step.StepService;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class ErgoServiceManager {
@@ -19,9 +19,9 @@ public class ErgoServiceManager {
      * Starts the step service
      */
     public void startStepService() {
-        if (!ErgoStepService.isServiceRunning()) {
+        if (!StepService.isServiceRunning()) {
             AppLog.d("Starting Service");
-            final Intent intent = new Intent(mContext, ErgoStepService.class);
+            final Intent intent = new Intent(mContext, StepService.class);
             mContext.startService(intent);
         } else {
             AppLog.d("Service Already Running");
@@ -33,7 +33,7 @@ public class ErgoServiceManager {
      */
     public void stopStepService() {
         AppLog.d("Stopping Service");
-        final Intent intent = new Intent(mContext, ErgoStepService.class);
+        final Intent intent = new Intent(mContext, StepService.class);
         mContext.stopService(intent);
     }
 
@@ -41,7 +41,7 @@ public class ErgoServiceManager {
      * Starts the audio service
      */
     public void startAudioService() {
-        final Intent intent = new Intent(mContext, ErgoAudioService.class);
+        final Intent intent = new Intent(mContext, AudioService.class);
         mContext.startService(intent);
     }
 

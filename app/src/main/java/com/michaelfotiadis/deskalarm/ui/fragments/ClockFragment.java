@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.model.PreferenceKeys;
-import com.michaelfotiadis.deskalarm.services.step.ErgoStepService;
+import com.michaelfotiadis.deskalarm.services.step.StepService;
 import com.michaelfotiadis.deskalarm.ui.base.fragment.BaseFragment;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.ToastHelper;
@@ -132,7 +132,7 @@ public class ClockFragment extends BaseFragment {
         mCurrentClockInterface.setMinutesToAlarm(getIntervalFromPreferences());
 
         // Resume the clock only if step service is still running
-        if (ErgoStepService.isServiceRunning()) {
+        if (StepService.isServiceRunning()) {
             startTheClock(getTimeStartedFromPreferences(), getIntervalFromPreferences());
         } else {
             stopTheClock();

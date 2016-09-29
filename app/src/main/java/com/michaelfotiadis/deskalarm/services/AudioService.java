@@ -11,12 +11,12 @@ import com.michaelfotiadis.deskalarm.ui.base.core.Core;
 import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
-public class ErgoAudioService extends IntentService {
+public class AudioService extends IntentService {
 
     private final Core mCore;
 
-    public ErgoAudioService() {
-        super("ErgoAudioService");
+    public AudioService() {
+        super("AudioService");
         mCore = new CoreProvider(this);
     }
 

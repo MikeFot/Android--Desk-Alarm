@@ -6,17 +6,17 @@ import android.content.Intent;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.model.Payloads;
 import com.michaelfotiadis.deskalarm.model.Requests;
-import com.michaelfotiadis.deskalarm.services.step.ErgoStepService;
+import com.michaelfotiadis.deskalarm.services.step.StepService;
 import com.michaelfotiadis.deskalarm.ui.base.core.Core;
 import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
-public class ErgoAlarmService extends IntentService {
+public class AlarmService extends IntentService {
 
     private final Core mCore;
 
-    public ErgoAlarmService() {
-        super("ErgoAlarmService");
+    public AlarmService() {
+        super("AlarmService");
         mCore = new CoreProvider(this);
     }
 
@@ -27,7 +27,7 @@ public class ErgoAlarmService extends IntentService {
 		/* Cancel all alarms if the service has been destroyed in the meantime.
          * This actually protects against the user or system destroying the application.
 		 */
-        if (!ErgoStepService.isServiceRunning()) {
+        if (!StepService.isServiceRunning()) {
             AppLog.d("Service Dismissed. Cancelling all alarms.");
             return;
         }

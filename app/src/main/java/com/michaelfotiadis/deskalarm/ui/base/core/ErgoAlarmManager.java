@@ -12,7 +12,7 @@ import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.model.Payloads;
 import com.michaelfotiadis.deskalarm.model.PreferenceKeys;
 import com.michaelfotiadis.deskalarm.model.Requests;
-import com.michaelfotiadis.deskalarm.services.ErgoAlarmService;
+import com.michaelfotiadis.deskalarm.services.AlarmService;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
@@ -67,7 +67,7 @@ public final class ErgoAlarmManager {
                     PrimitiveConversions.getDate(targetTime, AppConstants.SIMPLE_DATE_FORMAT_STRING)));
             //***
 
-            final Intent intent = new Intent(mContext, ErgoAlarmService.class);
+            final Intent intent = new Intent(mContext, AlarmService.class);
             intent.putExtra(Payloads.ALARM_PAYLOAD.getString(), Requests.REQUEST_CODE_1.getCode());
             final PendingIntent operation = PendingIntent.getService(mContext, 0, intent, 0);
             mAlarmManager.set(AlarmManager.RTC_WAKEUP, targetTime, operation);
@@ -94,7 +94,7 @@ public final class ErgoAlarmManager {
 
         final AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
-        final Intent intent = new Intent(mContext, ErgoAlarmService.class);
+        final Intent intent = new Intent(mContext, AlarmService.class);
 
         // creating a Pending Intent
         final PendingIntent operation = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_ONE_SHOT);
