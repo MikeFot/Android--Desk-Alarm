@@ -6,8 +6,9 @@
     <color name="primary_light">@color/md_blue_100</color>
     <color name="accent">@color/md_light_blue_500</color>
 
-    <color name="primary_text">@color/md_white_1000</color>
+    <color name="primary_text">@color/md_grey_900</color>
     <color name="secondary_text">@color/md_grey_600</color>
+    <color name="tertiary_text">@color/md_grey_400</color>
     <color name="text">@color/md_grey_900</color>
     <color name="icons">@color/md_white_1000</color>
 

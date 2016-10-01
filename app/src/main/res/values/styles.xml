@@ -14,7 +14,7 @@
 
         <item name="android:textColorPrimary">@color/primary_text</item>
         <item name="android:textColorSecondary">@color/secondary_text</item>
-        <item name="android:textColorTertiary">@color/text</item>
+        <item name="android:textColorTertiary">@color/tertiary_text</item>
 
         <!--Selector-->
         <item name="colorControlNormal">@color/color_control_normal</item>
@@ -47,18 +47,19 @@
     </style>
 
     <style name="AppTheme.AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
-    <!-- ToolBar -->
-    <style name="AppTheme.ToolBarStyle" parent="Theme.AppCompat.Light">
-        <item name="android:background">@color/primary</item>
-        <item name="android:textColorPrimary">@color/text</item>
-        <item name="android:textColorSecondary">@color/secondary_text</item>
-        <item name="actionMenuTextColor">@color/icons</item>
-    </style>
+    <style name="AppTheme.Switch" parent="AppTheme">
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/primary_light</item>
 
-    <style name="AppTheme.ToolBarTheme" parent="@style/Widget.AppCompat.Light.ActionBar">
-        <item name="colorControlNormal">@color/accent</item>
+        <!-- inactive thumb color -->
+        <item name="colorSwitchThumbNormal">@color/accent</item>
+
+        <!-- inactive track color (30% transparency) -->
+        <item name="android:colorForeground">@color/md_black_1000</item>
     </style>
 
 </resources>
