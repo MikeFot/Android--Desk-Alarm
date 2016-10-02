@@ -33,33 +33,33 @@ public final class ErgoAlarmManagerImpl implements ErgoAlarmManager {
 
     @Override
     public void setAlarm(final ALARM_MODE mode) {
-        final Long interval;
+        final Integer interval;
 
         switch (mode) {
             case NORMAL:
                 // schedule the alarm
-                interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
-                mPreferenceHandler.writeLongPreference(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
+                interval = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+                mPreferenceHandler.writeLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
                 mDataManager.storeIdleData();
                 break;
             case SNOOZE:
-                interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.SNOOZE_INTERVAL);
+                interval = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.SNOOZE_INTERVAL);
                 break;
             case REPEAT:
-                interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+                interval = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 mDataManager.storeIdleData();
-                mPreferenceHandler.writeLongPreference(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
+                mPreferenceHandler.writeLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
                 break;
             case AUTO:
-                interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+                interval = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 mDataManager.storeIdleData();
-                mPreferenceHandler.writeLongPreference(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
+                mPreferenceHandler.writeLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
                 break;
             case STOPPED:
-                interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+                interval = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 break;
             default:
-                interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+                interval = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 break;
         }
 
@@ -98,7 +98,7 @@ public final class ErgoAlarmManagerImpl implements ErgoAlarmManager {
     public void cancelAlarm() {
         mDataManager.storeIdleData();
 
-        mPreferenceHandler.writeLongPreference(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, 0L);
+        mPreferenceHandler.writeLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, 0L);
 
         final AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
@@ -119,7 +119,7 @@ public final class ErgoAlarmManagerImpl implements ErgoAlarmManager {
      */
     @Override
     public void saveTimeToPreferencesAndStore(final long timeStarted) {
-        mPreferenceHandler.writeLongPreference(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, timeStarted);
+        mPreferenceHandler.writeLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, timeStarted);
         if (timeStarted > 0) {
             // TODO do we still need this?
             // store the time

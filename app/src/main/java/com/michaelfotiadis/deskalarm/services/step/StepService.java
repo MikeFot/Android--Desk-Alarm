@@ -159,7 +159,7 @@ public class StepService extends IntentService implements SensorEventListener {
      * Reads shared preferences and assigns the Service Flag
      */
     private void assignServiceFlags() {
-        final String mode = mCore.getPreferenceHandler().getStringPreference(PreferenceHandlerImpl.PreferenceKey.SENSOR_MODE);
+        final String mode = mCore.getPreferenceHandler().getString(PreferenceHandlerImpl.PreferenceKey.SENSOR_MODE);
 
         final String[] data = this.getResources().getStringArray(R.array.array_sensor_modes);
 

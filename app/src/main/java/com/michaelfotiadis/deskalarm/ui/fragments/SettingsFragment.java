@@ -15,6 +15,9 @@ import com.michaelfotiadis.deskalarm.dialogs.ClearDataDialogFragment;
 import com.michaelfotiadis.deskalarm.dialogs.ClearPreferencesDialogFragment;
 import com.michaelfotiadis.deskalarm.dialogs.TimePickerDialogWrapper;
 import com.michaelfotiadis.deskalarm.dialogs.TimeToSnoozeDialogWrapper;
+import com.michaelfotiadis.deskalarm.ui.base.activity.BaseActivity;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.ui.base.dialog.BaseDialogFragment;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, OnSharedPreferenceChangeListener {
@@ -145,8 +148,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
      * Starts a number picker dialog for Time to Alarm
      */
     private void showSetAlarmNumberPickerDialog() {
-        final TimePickerDialogWrapper dialogWrapper = TimePickerDialogWrapper.newInstance(getActivity(), getPreferenceScreen().getSharedPreferences());
+        final TimePickerDialogWrapper dialogWrapper = TimePickerDialogWrapper.newInstance(getActivity(), getPreferenceHandler());
         dialogWrapper.show();
+    }
+
+    private PreferenceHandler getPreferenceHandler() {
+        if (getActivity() instanceof BaseActivity) {
+            return ((BaseActivity) getActivity()).getPreferenceHandler();
+        } else {
+            return new PreferenceHandlerImpl(getContext());
+        }
     }
 
 }

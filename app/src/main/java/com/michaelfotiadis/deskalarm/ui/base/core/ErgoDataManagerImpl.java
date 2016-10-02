@@ -70,7 +70,7 @@ public class ErgoDataManagerImpl implements ErgoDataManager {
      */
     /*package*/ void storeIdleData() {
         // get time started from preferences
-        final long storedTimeStarted = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED);
+        final long storedTimeStarted = mPreferenceHandler.getLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED);
 
         // store data in an object
         final TimeModelInstance dataInstance = new TimeModelInstance(storedTimeStarted);

@@ -10,13 +10,17 @@ public interface PreferenceHandler {
 
     void unregisterOnSharedPreferenceChangeListener(SharedPreferences.OnSharedPreferenceChangeListener listener);
 
-    Long getLongPreference(PreferenceKey key);
+    Long getLong(PreferenceKey key);
 
-    void writeLongPreference(PreferenceKey key, Long value);
+    Integer getInt(PreferenceKey key);
 
-    String getStringPreference(PreferenceKey key);
+    void writeInt(PreferenceKey key, Integer value);
 
-    void writeStringPreference(PreferenceKey key, String value);
+    void writeLong(PreferenceKey key, Long value);
+
+    String getString(PreferenceKey key);
+
+    void writeString(PreferenceKey key, String value);
 
     void clearPreferences();
 

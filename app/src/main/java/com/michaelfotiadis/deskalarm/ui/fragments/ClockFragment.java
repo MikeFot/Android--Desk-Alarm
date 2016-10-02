@@ -56,11 +56,11 @@ public class ClockFragment extends BaseFragment {
      * @return Long value of service time started from Shared Preferences
      */
     public long getTimeStartedFromPreferences() {
-        return getPreferenceHandler().getLongPreference(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED);
+        return getPreferenceHandler().getLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED);
     }
 
-    public long getIntervalFromPreferences() {
-        return getPreferenceHandler().getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+    public int getIntervalFromPreferences() {
+        return getPreferenceHandler().getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class ClockFragment extends BaseFragment {
 
         // read the clock preferences from the shared preference object
         AppLog.d("Preference is " + mClockPreference);
-        mClockPreference = getPreferenceHandler().getStringPreference(PreferenceHandlerImpl.PreferenceKey.CLOCK_TYPE);
+        mClockPreference = getPreferenceHandler().getString(PreferenceHandlerImpl.PreferenceKey.CLOCK_TYPE);
         // Set clock by preference
         if (mClockPreference.equals(getActivity().getString(R.string.clock_digital))) {
             mAnalogClock.setVisibility(View.GONE);

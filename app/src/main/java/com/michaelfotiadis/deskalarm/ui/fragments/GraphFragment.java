@@ -181,7 +181,7 @@ public class GraphFragment extends BaseFragment implements OnClickListener {
             }
             final int textColour;
 
-            final long interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+            final int interval = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
             // calculate a threshold for the graph gradient limit
             int threshold = (int) (interval * 0.1);
             if (threshold < 1) {

@@ -81,7 +81,7 @@ public class FusionClock extends View implements Clock {
         mDialWidth = mDial.getIntrinsicWidth();
         mDialHeight = mDial.getIntrinsicHeight();
 
-        final String hexColour = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
+        final String hexColour = mPreferenceHandler.getString(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
         mOverlayColor = Color.parseColor(hexColour);
 
         mLighterOverlayColor = ColorUtils.getLighterColor(mOverlayColor);

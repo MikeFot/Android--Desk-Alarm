@@ -126,7 +126,7 @@ public class ToastHelper {
 
         switch (mode) {
             case NORMAL:
-                final Long interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+                final Long interval = mPreferenceHandler.getLong(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 makeInfoToast(String.format(
                         "Alarm set for %s from now",
                         PrimitiveConversions.getTimeStringFromSeconds(interval * 60)),
@@ -134,7 +134,7 @@ public class ToastHelper {
                 break;
             case REPEAT:
                 // get the stored value from shared preferences
-                final Long alarmDuration = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+                final int alarmDuration = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 // make a card toast
                 makeInfoToast(String.format(
                         "Repeating for %s from now",
@@ -143,7 +143,7 @@ public class ToastHelper {
                 break;
             case SNOOZE:
                 // get the stored value from shared preferences
-                final Long snoozeDuration = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.SNOOZE_INTERVAL);
+                final int snoozeDuration = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.SNOOZE_INTERVAL);
                 // make a card toast
                 mSuperActivityToast = makeInfoToast(
                         String.format(

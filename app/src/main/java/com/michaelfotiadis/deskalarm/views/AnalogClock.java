@@ -80,7 +80,7 @@ public class AnalogClock extends View implements Clock {
         mDialHeight = mDial.getIntrinsicHeight();
         typedArray.recycle();
 
-        final String hexColor = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
+        final String hexColor = mPreferenceHandler.getString(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
         final int overlayColor = Color.parseColor(hexColor);
         mShiftedOverlayColor = ColorUtils.getRightBitShiftedColor(overlayColor);
         mLighterOverlayColor = ColorUtils.getLighterColor(overlayColor);

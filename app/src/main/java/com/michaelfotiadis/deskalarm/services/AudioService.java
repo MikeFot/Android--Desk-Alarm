@@ -23,7 +23,7 @@ public class AudioService extends IntentService {
     @Override
     protected void onHandleIntent(final Intent intent) {
 
-        final String preference = mCore.getPreferenceHandler().getStringPreference(PreferenceHandlerImpl.PreferenceKey.RINGTONE);
+        final String preference = mCore.getPreferenceHandler().getString(PreferenceHandlerImpl.PreferenceKey.RINGTONE);
 
         if (preference.length() < 1) {
             this.stopSelf();

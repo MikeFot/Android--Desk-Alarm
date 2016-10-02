@@ -90,7 +90,7 @@ public class ErgoNotificationManagerImpl implements ErgoNotificationManager {
         }
 
         // retrieve the notification type from the shared preferences object
-        final String notificationPreference = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.RINGTONE);
+        final String notificationPreference = mPreferenceHandler.getString(PreferenceHandlerImpl.PreferenceKey.RINGTONE);
 
         if (notificationPreference.length() < 1) {
             builder.setDefaults(Notification.DEFAULT_ALL);

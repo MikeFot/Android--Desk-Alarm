@@ -136,7 +136,7 @@ public class DigitalClock extends TextView implements Clock {
     private void init() {
         final int defaultFontSize = (int) getResources().getDimension(R.dimen.digital_clock_font_size);
 
-        final String fontName = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.FONT_TYPE);
+        final String fontName = mPreferenceHandler.getString(PreferenceHandlerImpl.PreferenceKey.FONT_TYPE);
         final Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), String.format("fonts/%s", fontName));
         try {
             setTypeface(typeface);
@@ -176,7 +176,7 @@ public class DigitalClock extends TextView implements Clock {
 		}
 		*/
 
-        final String fontColour = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
+        final String fontColour = mPreferenceHandler.getString(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
         try {
             this.setTextColor(Color.parseColor(fontColour));
         } catch (final Exception e) {

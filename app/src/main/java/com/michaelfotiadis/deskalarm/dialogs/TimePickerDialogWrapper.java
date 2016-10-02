@@ -3,13 +3,13 @@ package com.michaelfotiadis.deskalarm.dialogs;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 
 import com.michaelfotiadis.deskalarm.R;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 /**
@@ -23,26 +23,23 @@ public class TimePickerDialogWrapper {
 
     private final AlertDialog mDialog;
     private final int mOriginalSetting;
-    private final SharedPreferences mSharedPreferences;
+    private final PreferenceHandler mPreferenceHandler;
 
-    public static TimePickerDialogWrapper newInstance(final Activity activity, final SharedPreferences sharedPreferences) {
-        return new TimePickerDialogWrapper(activity, sharedPreferences);
+    public static TimePickerDialogWrapper newInstance(final Activity activity, final PreferenceHandler preferenceHandler) {
+        return new TimePickerDialogWrapper(activity, preferenceHandler);
     }
 
-    public TimePickerDialogWrapper(final Activity activity, final SharedPreferences sharedPreferences) {
+    public TimePickerDialogWrapper(final Activity activity, final PreferenceHandler preferenceHandler) {
 
-        mSharedPreferences = sharedPreferences;
+        mPreferenceHandler = preferenceHandler;
 
-        final int preferencesTime = mSharedPreferences.getInt(
-                activity.getString(R.string.pref_alarm_interval_key),
-                activity.getResources().getInteger(R.integer.time_to_alarm)
-        );
+        final int preferencesTime = mPreferenceHandler.getInt(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
 
 
         if (preferencesTime > MAX_TIME) {
             mOriginalSetting = MAX_TIME;
         } else {
-            mOriginalSetting = preferencesTime;
+            mOriginalSetting = (int) preferencesTime;
         }
 
         final int hour = mOriginalSetting / 60;
@@ -81,7 +78,7 @@ public class TimePickerDialogWrapper {
         linearLayout.addView(numberPicker, numberPickerParams);
 
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(context.getString(R.string.dialog_set_interval_between_alarms));
         alertDialogBuilder.setView(linearLayout);
         alertDialogBuilder
@@ -99,9 +96,8 @@ public class TimePickerDialogWrapper {
                                 dialog.cancel();
                             }
                         });
-        final AlertDialog alertDialog = alertDialogBuilder.create();
 
-        return alertDialog;
+        return alertDialogBuilder.create();
     }
 
     public void show() {
@@ -126,11 +122,7 @@ public class TimePickerDialogWrapper {
         if (timeToAlarm <= 0) {
             timeToAlarm = 1;
         }
-
-        // ensure that the edit will persist by creating an Editor instance
-        final SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putInt(mDialog.getContext().getString(R.string.pref_alarm_interval_key), timeToAlarm);
-        editor.apply();
+        mPreferenceHandler.writeInt(PreferenceHandler.PreferenceKey.ALARM_INTERVAL, timeToAlarm);
     }
 
 }

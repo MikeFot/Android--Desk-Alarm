@@ -31,7 +31,7 @@ public class GraphFactory {
                                        final PreferenceHandler preferenceHandler,
                                        final ErgoDataManager dataManager) {
 
-        final Long interval = preferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+        final int interval = preferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
 
         // calculate a threshold for the graph gradient limit
         int wakeThreshold = (int) (interval * 0.1);

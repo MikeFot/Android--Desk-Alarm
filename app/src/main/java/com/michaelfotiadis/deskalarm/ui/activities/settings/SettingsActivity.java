@@ -24,7 +24,7 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
                                           final String key) {
         if (key.equals(getString(R.string.pref_sensor_modes_key))) {
-            final String mode = getPreferenceHandler().getStringPreference(PreferenceHandlerImpl.PreferenceKey.SENSOR_MODE);
+            final String mode = getPreferenceHandler().getString(PreferenceHandlerImpl.PreferenceKey.SENSOR_MODE);
             // enable accelerometer if KITKAT or higher
             if (!mode.equals(getString(R.string.pref_sensor_modes_default))
                     && android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -52,7 +52,7 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
         // the application
         if (!hasStepDetector || !hasStepCounter || !hasAccelerometer) {
             // ensure that the edit will persist by creating an Editor instance
-            getPreferenceHandler().writeStringPreference(PreferenceHandlerImpl.PreferenceKey.SENSOR_MODE, getString(R.string.pref_sensor_modes_default));
+            getPreferenceHandler().writeString(PreferenceHandlerImpl.PreferenceKey.SENSOR_MODE, getString(R.string.pref_sensor_modes_default));
             makeSensorAlertDialog();
         }
     }

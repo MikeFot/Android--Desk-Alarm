@@ -23,6 +23,7 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
      */
     private final HashMap<PreferenceKey, Pair<String, String>> mStringMap;
     private final HashMap<PreferenceKey, Pair<String, Long>> mLongMap;
+    private final HashMap<PreferenceKey, Pair<String, Integer>> mIntegerMap;
 
     public PreferenceHandlerImpl(final Context context) {
         this.mContext = context;
@@ -33,26 +34,26 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
         this.mStringMap = new HashMap<>();
         putToStringMap(
                 PreferenceKey.RINGTONE,
-                getString(R.string.pref_ringtones_key),
-                getString(R.string.pref_ringtones_default));
+                resolveString(R.string.pref_ringtones_key),
+                resolveString(R.string.pref_ringtones_default));
         putToStringMap(
                 PreferenceKey.SENSOR_MODE,
-                getString(R.string.pref_sensor_modes_key),
-                getString(R.string.pref_sensor_modes_default));
+                resolveString(R.string.pref_sensor_modes_key),
+                resolveString(R.string.pref_sensor_modes_default));
         putToStringMap(
                 PreferenceKey.FONT_TYPE,
-                getString(R.string.pref_font_key),
-                getString(R.string.pref_font_default_value)
+                resolveString(R.string.pref_font_key),
+                resolveString(R.string.pref_font_default_value)
         );
         putToStringMap(
                 PreferenceKey.FONT_COLOR,
-                getString(R.string.pref_font_color_key),
-                getString(R.string.pref_font_color_default_value)
+                resolveString(R.string.pref_font_color_key),
+                resolveString(R.string.pref_font_color_default_value)
         );
         putToStringMap(
                 PreferenceKey.CLOCK_TYPE,
-                getString(R.string.pref_clock_type_key),
-                getString(R.string.pref_clock_type_default)
+                resolveString(R.string.pref_clock_type_key),
+                resolveString(R.string.pref_clock_type_default)
         );
 
         /**
@@ -61,16 +62,21 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
         this.mLongMap = new HashMap<>();
         putToLongMap(
                 PreferenceKey.TIME_STARTED,
-                getString(R.string.pref_time_started),
+                resolveString(R.string.pref_time_started),
                 0L);
-        putToLongMap(
+
+        /**
+         * Setup the integer map
+         */
+        this.mIntegerMap = new HashMap<>();
+        putToIntegerMap(
                 PreferenceKey.ALARM_INTERVAL,
-                getString(R.string.pref_alarm_interval_key),
-                1L);
-        putToLongMap(
+                resolveString(R.string.pref_alarm_interval_key),
+                15);
+        putToIntegerMap(
                 PreferenceKey.SNOOZE_INTERVAL,
-                getString(R.string.pref_snooze_interval_key),
-                1L);
+                resolveString(R.string.pref_snooze_interval_key),
+                1);
 
     }
 
@@ -85,43 +91,67 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
     }
 
     @Override
-    public Long getLongPreference(final PreferenceKey key) {
+    public Long getLong(final PreferenceKey key) {
 
-        if (mStringMap.containsKey(key)) {
+        if (mLongMap.containsKey(key)) {
             final Pair<String, Long> pair = mLongMap.get(key);
             return getAppSharedPreferences().getLong(pair.first, pair.second);
         } else {
-            AppLog.w("Invalid preference requested");
+            AppLog.w("Invalid long preference requested for key " + key.toString());
             return Long.MIN_VALUE;
         }
     }
 
     @Override
-    public void writeLongPreference(final PreferenceKey key, final Long value) {
+    public Integer getInt(final PreferenceKey key) {
+
+        if (mIntegerMap.containsKey(key)) {
+            final Pair<String, Integer> pair = mIntegerMap.get(key);
+            return getAppSharedPreferences().getInt(pair.first, pair.second);
+        } else {
+            AppLog.w("Invalid long preference requested for key " + key.toString());
+            return Integer.MIN_VALUE;
+        }
+    }
+
+    @Override
+    public void writeInt(final PreferenceKey key, final Integer value) {
+        if (mIntegerMap.containsKey(key)) {
+            final Pair<String, Integer> pair = mIntegerMap.get(key);
+            final SharedPreferences.Editor editor = getEditor();
+            editor.putInt(pair.first, value);
+            editor.apply();
+        } else {
+            AppLog.w("Attempted to write invalid long preference key " + key.toString());
+        }
+    }
+
+    @Override
+    public void writeLong(final PreferenceKey key, final Long value) {
         if (mLongMap.containsKey(key)) {
             final Pair<String, Long> pair = mLongMap.get(key);
             final SharedPreferences.Editor editor = getEditor();
             editor.putLong(pair.first, value);
             editor.apply();
         } else {
-            AppLog.w("Attempted to write invalid preference key");
+            AppLog.w("Attempted to write invalid long preference key " + key.toString());
         }
     }
 
     @Override
-    public String getStringPreference(final PreferenceKey key) {
+    public String getString(final PreferenceKey key) {
 
         if (mStringMap.containsKey(key)) {
             final Pair<String, String> pair = mStringMap.get(key);
             return getAppSharedPreferences().getString(pair.first, pair.second);
         } else {
-            AppLog.w("Invalid preference requested");
+            AppLog.w("Invalid string preference requested " + key.toString());
             return "";
         }
     }
 
     @Override
-    public void writeStringPreference(final PreferenceKey key, final String value) {
+    public void writeString(final PreferenceKey key, final String value) {
 
         if (mStringMap.containsKey(key)) {
             final Pair<String, String> pair = mStringMap.get(key);
@@ -129,8 +159,15 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
             editor.putString(pair.first, value);
             editor.apply();
         } else {
-            AppLog.w("Attempted to write invalid preference key");
+            AppLog.w("Attempted to write invalid string preference key " + key.toString());
         }
+    }
+
+    @Override
+    public void clearPreferences() {
+        final SharedPreferences.Editor editor = getEditor();
+        editor.clear();
+        editor.apply();
     }
 
     /**
@@ -143,14 +180,7 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
         return PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 
-    @Override
-    public void clearPreferences() {
-        final SharedPreferences.Editor editor = getEditor();
-        editor.clear();
-        editor.apply();
-    }
-
-    private String getString(final int resId) {
+    private String resolveString(final int resId) {
         return mContext.getString(resId);
     }
 
@@ -160,6 +190,10 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
 
     private void putToLongMap(final PreferenceKey key, final String stringKey, final long fallbackValue) {
         mLongMap.put(key, new Pair<>(stringKey, fallbackValue));
+    }
+
+    private void putToIntegerMap(final PreferenceKey key, final String stringKey, final int fallbackValue) {
+        mIntegerMap.put(key, new Pair<>(stringKey, fallbackValue));
     }
 
     private SharedPreferences.Editor getEditor() {
