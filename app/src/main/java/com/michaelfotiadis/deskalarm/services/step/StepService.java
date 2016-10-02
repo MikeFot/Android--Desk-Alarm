@@ -194,8 +194,6 @@ public class StepService extends IntentService implements SensorEventListener {
      * Method which uses a wake lock and the step sensor to detect phone movement
      */
     private void processAutomaticMode() {
-
-
         final long sleepTime;
 
         if (mFlag == FLAGS.LOW_ACCURACY) {

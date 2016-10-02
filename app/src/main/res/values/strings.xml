@@ -185,4 +185,6 @@
     <!-- Default Values -->
     <string name="label_no_data_yet">No user data for today!</string>
 
+    <string name="text_minutes">minutes</string>
+
 </resources>

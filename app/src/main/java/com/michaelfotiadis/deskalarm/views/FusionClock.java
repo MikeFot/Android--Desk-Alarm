@@ -268,7 +268,7 @@ public class FusionClock extends View implements Clock {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        AppLog.d("Analogue Clock Attached to Window");
+        AppLog.d("Fusion Clock Attached to Window");
         mChanged = true;
     }
 

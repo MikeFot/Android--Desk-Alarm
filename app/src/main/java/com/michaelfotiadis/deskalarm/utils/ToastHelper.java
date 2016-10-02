@@ -126,7 +126,7 @@ public class ToastHelper {
 
         switch (mode) {
             case NORMAL:
-                final Long interval = mPreferenceHandler.getLong(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
+                final int interval = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 makeInfoToast(String.format(
                         "Alarm set for %s from now",
                         PrimitiveConversions.getTimeStringFromSeconds(interval * 60)),

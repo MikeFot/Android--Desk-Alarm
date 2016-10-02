@@ -114,9 +114,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
             }
         } else if (key.equals(getActivity().getString(R.string.pref_alarm_interval_key))) {
-            preference.setSummary(String.valueOf(sharedPreferences.getInt(key, 0)));
-        } else {
-            preference.setSummary(sharedPreferences.getString(key, ""));
+            preference.setSummary(
+                    String.format("%s %s",
+                            String.valueOf(getPreferenceHandler().getInt(PreferenceHandler.PreferenceKey.ALARM_INTERVAL)),
+                            getString(R.string.text_minutes)));
         }
     }
 
