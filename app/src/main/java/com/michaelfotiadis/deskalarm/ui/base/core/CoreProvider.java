@@ -2,6 +2,7 @@ package com.michaelfotiadis.deskalarm.ui.base.core;
 
 import android.content.Context;
 
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.FileHelper;
 
 /**

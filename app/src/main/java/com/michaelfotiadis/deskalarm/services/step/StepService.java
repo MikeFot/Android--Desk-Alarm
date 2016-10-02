@@ -20,6 +20,7 @@ import com.michaelfotiadis.deskalarm.model.Payloads;
 import com.michaelfotiadis.deskalarm.ui.base.core.Core;
 import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager.ALARM_MODE;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.util.Locale;
@@ -158,9 +159,7 @@ public class StepService extends IntentService implements SensorEventListener {
      * Reads shared preferences and assigns the Service Flag
      */
     private void assignServiceFlags() {
-        final String mode = mCore.getPreferenceHandler().getAppSharedPreferences().getString(
-                this.getString(R.string.pref_sensor_modes_key),
-                this.getString(R.string.pref_sensor_modes_default));
+        final String mode = mCore.getPreferenceHandler().getStringPreference(PreferenceHandler.PreferenceKey.SENSOR_MODE);
 
         final String[] data = this.getResources().getStringArray(R.array.array_sensor_modes);
 

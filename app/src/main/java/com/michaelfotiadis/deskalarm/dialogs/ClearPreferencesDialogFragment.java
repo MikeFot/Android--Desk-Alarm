@@ -2,13 +2,11 @@ package com.michaelfotiadis.deskalarm.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.WindowManager;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.dialog.AlertDialogFactory;
 import com.michaelfotiadis.deskalarm.ui.base.dialog.BaseDialogFragment;
 
@@ -39,16 +37,11 @@ public class ClearPreferencesDialogFragment extends BaseDialogFragment {
                 R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
-                        clearPreferences();
+                        getPreferenceHandler().clearPreferences();
                     }
                 },
                 R.string.cancel, null);
     }
 
-    private void clearPreferences() {
-        final SharedPreferences.Editor editor = new PreferenceHandler(getContext()).getAppSharedPreferences().edit();
-        editor.clear();
-        editor.apply();
-    }
 
 }

@@ -4,19 +4,16 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
 
-import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.constants.AppConstants;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.model.Payloads;
-import com.michaelfotiadis.deskalarm.model.PreferenceKeys;
 import com.michaelfotiadis.deskalarm.model.Requests;
 import com.michaelfotiadis.deskalarm.services.AlarmService;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
-import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public final class ErgoAlarmManager {
@@ -34,35 +31,45 @@ public final class ErgoAlarmManager {
     }
 
     public void setAlarm(final ALARM_MODE mode) {
-        final int interval;
-        if (mode == ALARM_MODE.NORMAL) {
-            // schedule the alarm
-            interval = mPreferenceHandler.getAppSharedPreferences().getInt(mContext.getString(R.string.pref_alarm_interval_key), 1);
-            final Editor editor = mPreferenceHandler.getAppSharedPreferences().edit();
-            editor.putLong(PreferenceKeys.KEY_1.getString(), Calendar.getInstance().getTimeInMillis());
-            editor.apply();
-            mDataManager.storeIdleData();
-        } else if (mode == ALARM_MODE.SNOOZE) {
-            interval = mPreferenceHandler.getAppSharedPreferences().getInt(mContext.getString(R.string.pref_snooze_interval_key), 1);
-        } else if (mode == ALARM_MODE.REPEAT || mode == ALARM_MODE.AUTO) {
-            interval = mPreferenceHandler.getAppSharedPreferences().getInt(mContext.getString(R.string.pref_alarm_interval_key), 1);
-            mDataManager.storeIdleData();
-            final Editor editor = mPreferenceHandler.getAppSharedPreferences().edit();
-            editor.putLong(PreferenceKeys.KEY_1.getString(), Calendar.getInstance().getTimeInMillis());
-            editor.apply();
-        } else {
-            interval = mPreferenceHandler.getAppSharedPreferences().getInt(mContext.getString(R.string.pref_alarm_interval_key), 1);
+        final Long interval;
+
+        switch (mode) {
+            case NORMAL:
+                // schedule the alarm
+                interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+                mPreferenceHandler.writeLongPreference(PreferenceHandler.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
+                mDataManager.storeIdleData();
+                break;
+            case SNOOZE:
+                interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.SNOOZE_INTERVAL);
+                break;
+            case REPEAT:
+                interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+                mDataManager.storeIdleData();
+                mPreferenceHandler.writeLongPreference(PreferenceHandler.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
+                break;
+            case AUTO:
+                interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+                mDataManager.storeIdleData();
+                mPreferenceHandler.writeLongPreference(PreferenceHandler.PreferenceKey.TIME_STARTED, System.currentTimeMillis());
+                break;
+            case STOPPED:
+                interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+                break;
+            default:
+                interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+                break;
         }
 
-        if (interval > 0) {
-            final long targetTime = Calendar.getInstance().getTimeInMillis()
-                    + TimeUnit.MILLISECONDS.toMinutes(interval);
+
+        if (interval != null && interval > 0) {
+            final long targetTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(interval);
             //***
             AppLog.d(String.format("\n\n***\nAlarm is set %s\n***\n",
                     PrimitiveConversions.getDate(targetTime, AppConstants.SIMPLE_DATE_FORMAT_STRING)));
 
             AppLog.d(String.format("Current time: %s",
-                    PrimitiveConversions.getDate(Calendar.getInstance().getTimeInMillis(), AppConstants.SIMPLE_DATE_FORMAT_STRING)));
+                    PrimitiveConversions.getDate(System.currentTimeMillis(), AppConstants.SIMPLE_DATE_FORMAT_STRING)));
             AppLog.d(String.format("Alarm time: %s",
                     PrimitiveConversions.getDate(targetTime, AppConstants.SIMPLE_DATE_FORMAT_STRING)));
             //***
@@ -88,9 +95,7 @@ public final class ErgoAlarmManager {
     public void cancelAlarm() {
         mDataManager.storeIdleData();
 
-        final Editor editor = mPreferenceHandler.getAppSharedPreferences().edit();
-        editor.putLong(PreferenceKeys.KEY_1.getString(), 0);
-        editor.apply();
+        mPreferenceHandler.writeLongPreference(PreferenceHandler.PreferenceKey.TIME_STARTED, 0L);
 
         final AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
@@ -110,14 +115,9 @@ public final class ErgoAlarmManager {
      * @param timeStarted
      */
     public void saveTimeToPreferencesAndStore(final long timeStarted) {
-
-        final Editor editor = mPreferenceHandler.getAppSharedPreferences().edit();
-        editor.putLong(PreferenceKeys.KEY_1.getString(), timeStarted);
-        editor.apply();
-
+        mPreferenceHandler.writeLongPreference(PreferenceHandler.PreferenceKey.TIME_STARTED, timeStarted);
         if (timeStarted > 0) {
             // store the time
-
         }
     }
 

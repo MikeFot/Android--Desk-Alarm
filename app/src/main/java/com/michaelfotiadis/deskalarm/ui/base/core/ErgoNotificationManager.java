@@ -16,6 +16,7 @@ import com.michaelfotiadis.deskalarm.constants.AppConstants;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.model.Payloads;
 import com.michaelfotiadis.deskalarm.ui.activities.main.MainActivity;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import org.json.JSONArray;
@@ -86,9 +87,7 @@ public class ErgoNotificationManager {
         }
 
         // retrieve the notification type from the shared preferences object
-        final String notificationPreference = mPreferenceHandler.getAppSharedPreferences().getString(
-                mContext.getString(R.string.pref_ringtones_key),
-                mContext.getString(R.string.pref_ringtones_default));
+        final String notificationPreference = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.RINGTONE);
 
         if (notificationPreference.length() < 1) {
             builder.setDefaults(Notification.DEFAULT_ALL);

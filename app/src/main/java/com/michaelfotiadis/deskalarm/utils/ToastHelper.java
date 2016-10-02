@@ -4,9 +4,8 @@ import android.app.Activity;
 
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
-import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager;
-import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class ToastHelper {
@@ -126,8 +125,7 @@ public class ToastHelper {
 
         switch (mode) {
             case NORMAL:
-                final int interval = mPreferenceHandler.getAppSharedPreferences().getInt(
-                        mActivity.getString(R.string.pref_alarm_interval_key), 1);
+                final Long interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
                 makeInfoToast(String.format(
                         "Alarm set for %s from now",
                         PrimitiveConversions.getTimeStringFromSeconds(interval * 60)),
@@ -135,8 +133,7 @@ public class ToastHelper {
                 break;
             case REPEAT:
                 // get the stored value from shared preferences
-                final int alarmDuration = mPreferenceHandler.getAppSharedPreferences().getInt(
-                        mActivity.getString(R.string.pref_alarm_interval_key), 1);
+                final Long alarmDuration = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
                 // make a card toast
                 makeInfoToast(String.format(
                         "Repeating for %s from now",
@@ -145,8 +142,7 @@ public class ToastHelper {
                 break;
             case SNOOZE:
                 // get the stored value from shared preferences
-                final int snoozeDuration = mPreferenceHandler.getAppSharedPreferences().getInt(
-                        mActivity.getString(R.string.pref_snooze_interval_key), 1);
+                final Long snoozeDuration = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.SNOOZE_INTERVAL);
                 // make a card toast
                 mSuperActivityToast = makeInfoToast(
                         String.format(

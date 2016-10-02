@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         mToastHelper = new ToastHelper(this);
 
         // look out for Theme changes from SharedPreferences
-        getPreferenceHandler().getAppSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        getPreferenceHandler().registerOnSharedPreferenceChangeListener(this);
 
         setUpViewPager();
 
@@ -107,6 +107,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         mBinder.onPageSelected(0);
 
     }
+
 
     private Fragment getCurrentFragment() {
         return mPagerAdapter.getItem(mPager.getCurrentItem());
@@ -167,6 +168,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
 
     @Override
     protected void onDestroy() {
+        getPreferenceHandler().unregisterOnSharedPreferenceChangeListener(this);
         getNotificationManager().cancelAlarmNotification();
         unregisterResponseReceiver();
         super.onDestroy();

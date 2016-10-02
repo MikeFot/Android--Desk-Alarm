@@ -17,10 +17,10 @@ import android.widget.TextView;
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
-import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.fragment.BaseFragment;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
-import com.michaelfotiadis.deskalarm.views.ErgoGraphicalViewBuilder;
+import com.michaelfotiadis.deskalarm.views.GraphFactory;
 
 import org.achartengine.GraphicalView;
 import org.achartengine.model.SeriesSelection;
@@ -125,7 +125,7 @@ public class GraphFragment extends BaseFragment implements OnClickListener {
     private void generateChart() {
         mChartContainerLayout.removeAllViews();
 
-        mChartView = new ErgoGraphicalViewBuilder().generateChart(getActivity(), getPreferenceHandler(), getDataManager());
+        mChartView = new GraphFactory().generateChart(getActivity(), getPreferenceHandler(), getDataManager());
 
         // Adding click event to the Line Chart.
         mChartView.setOnClickListener(this);
@@ -180,10 +180,7 @@ public class GraphFragment extends BaseFragment implements OnClickListener {
             }
             final int textColour;
 
-            final int interval = mPreferenceHandler.getAppSharedPreferences()
-                    .getInt(getActivity().getString(
-                            R.string.pref_alarm_interval_key), 1);
-
+            final long interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
             // calculate a threshold for the graph gradient limit
             int threshold = (int) (interval * 0.1);
             if (threshold < 1) {

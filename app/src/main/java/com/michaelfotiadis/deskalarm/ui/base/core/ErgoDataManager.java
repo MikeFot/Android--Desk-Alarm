@@ -6,7 +6,7 @@ import android.content.Intent;
 import com.michaelfotiadis.deskalarm.constants.DataStorage;
 import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
-import com.michaelfotiadis.deskalarm.model.PreferenceKeys;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.FileHelper;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
@@ -66,7 +66,7 @@ public class ErgoDataManager {
      */
     public void storeIdleData() {
         // get time started from preferences
-        final long storedTimeStarted = mPreferenceHandler.getAppSharedPreferences().getLong(PreferenceKeys.KEY_1.getString(), 0);
+        final long storedTimeStarted = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.TIME_STARTED);
 
         // store data in an object
         mDataInstance = new TimeModelInstance(storedTimeStarted);

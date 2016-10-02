@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.ui.base.activity.BaseActivity;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.fragments.SettingsFragment;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
@@ -23,9 +24,7 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
                                           final String key) {
         if (key.equals(getString(R.string.pref_sensor_modes_key))) {
-            final String mode = getPreferenceHandler().getAppSharedPreferences()
-                    .getString(this.getString(R.string.pref_sensor_modes_key),
-                            this.getString(R.string.pref_sensor_modes_default));
+            final String mode = getPreferenceHandler().getStringPreference(PreferenceHandler.PreferenceKey.SENSOR_MODE);
             // enable accelerometer if KITKAT or higher
             if (!mode.equals(getString(R.string.pref_sensor_modes_default))
                     && android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -53,12 +52,7 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
         // the application
         if (!hasStepDetector || !hasStepCounter || !hasAccelerometer) {
             // ensure that the edit will persist by creating an Editor instance
-            final SharedPreferences.Editor editor = getPreferenceHandler().getAppSharedPreferences().edit();
-            editor.putString(SettingsActivity.this
-                            .getString(R.string.pref_sensor_modes_key),
-                    SettingsActivity.this
-                            .getString(R.string.pref_sensor_modes_default));
-            editor.apply();
+            getPreferenceHandler().writeStringPreference(PreferenceHandler.PreferenceKey.SENSOR_MODE, getString(R.string.pref_sensor_modes_default));
             makeSensorAlertDialog();
         }
     }
@@ -78,7 +72,7 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
     @Override
     protected void onPause() {
         // remove the preference listener
-        getPreferenceHandler().getAppSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        getPreferenceHandler().unregisterOnSharedPreferenceChangeListener(this);
         // dismiss the dialog
         if (mSensorDialog != null) {
             mSensorDialog.dismiss();
@@ -89,7 +83,7 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
     @Override
     protected void onResume() {
         // register a shared preferences listener
-        getPreferenceHandler().getAppSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        getPreferenceHandler().registerOnSharedPreferenceChangeListener(this);
         super.onResume();
     }
 

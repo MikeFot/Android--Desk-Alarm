@@ -10,20 +10,19 @@ import android.widget.TextView;
 
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
-import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.util.Calendar;
 
-public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
+public class DigitalClock extends TextView implements Clock {
 
     private static final String TIME_ZERO_VALUE = "00:00:00";
     private static final long _updateInterval = 1000;
     private final Handler mHandler = new Handler();
     private final PreferenceHandler mPreferenceHandler;
     private long mStartTime = 0;
-    private int mPrefFontSize = 12;
     private final ClockModelInstance mClockInstance;
     private long mTimeRunning;
     private final Runnable mRunnable = new Runnable() {
@@ -34,26 +33,27 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
         }
     };
 
-    public ErgoDigitalClock(final Context context) {
+    public DigitalClock(final Context context) {
         super(context);
         mClockInstance = new ClockModelInstance();
         mPreferenceHandler = new PreferenceHandler(context);
+        init();
     }
 
-    public ErgoDigitalClock(final Context context, final AttributeSet attrs) {
+    public DigitalClock(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         mClockInstance = new ClockModelInstance();
         mPreferenceHandler = new PreferenceHandler(context);
-        init(attrs);
+        init();
 
 
     }
 
-    public ErgoDigitalClock(final Context context, final AttributeSet attrs, final int defStyle) {
+    public DigitalClock(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         mClockInstance = new ClockModelInstance();
         mPreferenceHandler = new PreferenceHandler(context);
-        init(attrs);
+        init();
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
     }
 
     @Override
-    public void startClock(final long startTime, final int minutesToAlarm) {
+    public void startClock(final long startTime, final long minutesToAlarm) {
         mStartTime = startTime;
         mHandler.post(mRunnable);
         invalidate();
@@ -103,10 +103,7 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
 
     @Override
     public boolean isVisible() {
-        if (this.getVisibility() == View.VISIBLE) {
-            return true;
-        }
-        return false;
+        return View.VISIBLE == this.getVisibility();
     }
 
     @Override
@@ -119,7 +116,7 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
     }
 
     @Override
-    public void setMinutesToAlarm(final int minutesToAlarm) {
+    public void setMinutesToAlarm(final long minutesToAlarm) {
         // TODO Auto-generated method stub
 
     }
@@ -135,14 +132,11 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
         super.onAttachedToWindow();
     }
 
-    private void init(final AttributeSet attrs) {
-        mPrefFontSize = (int) getResources().getDimension(R.dimen.digital_clock_font_size);
+    private void init() {
+        final int defaultFontSize = (int) getResources().getDimension(R.dimen.digital_clock_font_size);
 
-        final String fontName = mPreferenceHandler.getAppSharedPreferences().getString(
-                getContext().getString(R.string.pref_font_key),
-                getContext().getString(R.string.pref_font_default_value));
-        final Typeface typeface = Typeface.createFromAsset(getContext().getAssets(),
-                "fonts/" + fontName);
+        final String fontName = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.FONT_TYPE);
+        final Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), String.format("fonts/%s", fontName));
         try {
             setTypeface(typeface);
         } catch (final Exception e1) {
@@ -150,7 +144,7 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
         }
 
 
-        setTextSize(mPrefFontSize);
+        setTextSize(defaultFontSize);
 
 		/* This commented section contains code for handling Attributes */
         /*
@@ -181,13 +175,11 @@ public class ErgoDigitalClock extends TextView implements ErgoClockInterface {
 		}
 		*/
 
-        final String fontColour = mPreferenceHandler.getAppSharedPreferences().getString(
-                getContext().getString(R.string.pref_font_color_key),
-                getContext().getString(R.string.pref_font_color_default_value));
+        final String fontColour = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.FONT_COLOR);
         try {
             this.setTextColor(Color.parseColor(fontColour));
         } catch (final Exception e) {
-            AppLog.e("Error encountered while settng font Color: ", e);
+            AppLog.e("Error encountered while setting font Color: ", e);
         }
 
         // set the time initially to 00:00:00

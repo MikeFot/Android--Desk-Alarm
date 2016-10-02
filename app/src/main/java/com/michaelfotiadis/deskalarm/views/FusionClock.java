@@ -1,18 +1,18 @@
 package com.michaelfotiadis.deskalarm.views;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RemoteViews.RemoteView;
 
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
-import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
@@ -24,10 +24,11 @@ import java.util.Calendar;
  * minutes.
  */
 @RemoteView
-public class ErgoFusionClock extends View implements ErgoClockInterface {
+public class FusionClock extends View implements Clock {
 
     private final PreferenceHandler mPreferenceHandler;
     private final Handler mHandler = new Handler();
+    private final ClockModelInstance mClockInstance = new ClockModelInstance();
     private Drawable mHourHand;
     private Drawable mMinuteHand;
     private Drawable mSecondHand;
@@ -42,9 +43,8 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
     private int mOverlayColor;
     private int mLighterOverlayColor;
     private int mShiftedOverlayColor;
-    private int mInterval;
+    private long mInterval;
     private long mTimeRunning;
-    private ClockModelInstance mClockInstance = new ClockModelInstance();
     private long mStartTime = 0;
     private final Runnable mRunnable = new Runnable() {
         @Override
@@ -57,33 +57,30 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
     };
     private float rotation = 0;
 
-    public ErgoFusionClock(final Context context) {
+    public FusionClock(final Context context) {
         super(context);
         mPreferenceHandler = new PreferenceHandler(context);
     }
 
-    public ErgoFusionClock(final Context context, final AttributeSet attrs) {
+    public FusionClock(final Context context, final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    private ErgoFusionClock(final Context context, final AttributeSet attrs,
-                            final int defStyle) {
+    private FusionClock(final Context context, final AttributeSet attrs,
+                        final int defStyle) {
         super(context, attrs, defStyle);
         mPreferenceHandler = new PreferenceHandler(context);
-        final Resources resources = context.getResources();
-        mDial = resources.getDrawable(R.drawable.clock_fusion_dial_r_three);
-        mHourHand = resources.getDrawable(R.drawable.clock_fusion_hour_hand);
-        mMinuteHand = resources.getDrawable(R.drawable.clock_fusion_hand_minutes);
-        mSecondHand = resources.getDrawable(R.drawable.clock_fusion_second);
-        mAlarmHandMinutes = resources.getDrawable(R.drawable.clock_fusion_minute_back);
-        mAlarmHandHours = resources.getDrawable(R.drawable.clock_fusion_hour_back);
+        mDial = ContextCompat.getDrawable(context, R.drawable.clock_fusion_dial_r_three);
+        mHourHand = ContextCompat.getDrawable(context, R.drawable.clock_fusion_hour_hand);
+        mMinuteHand = ContextCompat.getDrawable(context, R.drawable.clock_fusion_hand_minutes);
+        mSecondHand = ContextCompat.getDrawable(context, R.drawable.clock_fusion_second);
+        mAlarmHandMinutes = ContextCompat.getDrawable(context, R.drawable.clock_fusion_minute_back);
+        mAlarmHandHours = ContextCompat.getDrawable(context, R.drawable.clock_fusion_hour_back);
 
         mDialWidth = mDial.getIntrinsicWidth();
         mDialHeight = mDial.getIntrinsicHeight();
 
-        final String hexColour = mPreferenceHandler.getAppSharedPreferences().getString(
-                getContext().getString(R.string.pref_font_color_key),
-                getContext().getString(R.string.pref_font_color_default_value));
+        final String hexColour = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.FONT_COLOR);
         mOverlayColor = Color.parseColor(hexColour);
 
         mLighterOverlayColor = ColorUtils.getLighterColor(mOverlayColor);
@@ -126,7 +123,7 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
     }
 
     @Override
-    public void startClock(final long startTime, final int minutesToAlarm) {
+    public void startClock(final long startTime, final long minutesToAlarm) {
         mStartTime = startTime;
         mInterval = minutesToAlarm;
         isClockRunning = true;
@@ -156,7 +153,7 @@ public class ErgoFusionClock extends View implements ErgoClockInterface {
     }
 
     @Override
-    public void setMinutesToAlarm(final int minutesToAlarm) {
+    public void setMinutesToAlarm(final long minutesToAlarm) {
         mInterval = minutesToAlarm;
     }
 

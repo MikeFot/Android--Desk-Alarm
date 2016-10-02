@@ -16,7 +16,7 @@ import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoDataManager;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoNotificationManager;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoServiceManager;
-import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.dialog.AlertDialogFactory;
 import com.michaelfotiadis.deskalarm.utils.FileHelper;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;

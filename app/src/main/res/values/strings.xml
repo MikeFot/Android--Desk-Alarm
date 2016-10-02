@@ -25,6 +25,7 @@
     <string name="pref_alarm_interval_key">key_pref_clock_interval</string>
     <string name="pref_alarm_interval_summary">Set time between alarms</string>
     <string name="pref_alarm_interval_title">Alarm Intervals</string>
+    <string name="pref_time_started">"Key_1_Time_Started"</string>
     <!-- Preference Snooze Interval -->
     <string name="pref_snooze_interval_key">key_pref_snooze_interval</string>
     <string name="pref_snooze_interval_summary">Set snooze delay</string>

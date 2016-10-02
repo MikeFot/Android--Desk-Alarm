@@ -6,23 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
-import com.michaelfotiadis.deskalarm.model.PreferenceKeys;
 import com.michaelfotiadis.deskalarm.services.step.StepService;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.fragment.BaseFragment;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.ToastHelper;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
-import com.michaelfotiadis.deskalarm.views.ErgoAnalogClock;
-import com.michaelfotiadis.deskalarm.views.ErgoClockInterface;
-import com.michaelfotiadis.deskalarm.views.ErgoDigitalClock;
-import com.michaelfotiadis.deskalarm.views.ErgoFusionClock;
+import com.michaelfotiadis.deskalarm.views.AnalogClock;
+import com.michaelfotiadis.deskalarm.views.Clock;
+import com.michaelfotiadis.deskalarm.views.DigitalClock;
+import com.michaelfotiadis.deskalarm.views.FusionClock;
 
 /**
  * Custom Fragment for storing a clock View
@@ -32,10 +31,10 @@ import com.michaelfotiadis.deskalarm.views.ErgoFusionClock;
 public class ClockFragment extends BaseFragment {
     private ToastHelper mToastHelper;
     // Fields for storing the Clock Interface and its 2 implementations
-    private ErgoClockInterface mCurrentClockInterface;
-    private ErgoAnalogClock mAnalogClock;
-    private ErgoDigitalClock mDigitalClock;
-    private ErgoFusionClock mFusionClock;
+    private Clock mCurrentClock;
+    private AnalogClock mAnalogClock;
+    private DigitalClock mDigitalClock;
+    private FusionClock mFusionClock;
     // variable for storing instance of Broadcast Receiver
     private ResponseReceiver mResponseReceiver;
     // variable for storing clock preference
@@ -57,14 +56,11 @@ public class ClockFragment extends BaseFragment {
      * @return Long value of service time started from Shared Preferences
      */
     public long getTimeStartedFromPreferences() {
-        return PreferenceManager.getDefaultSharedPreferences(getActivity()).getLong(
-                PreferenceKeys.KEY_1.getString(), 0);
+        return getPreferenceHandler().getLongPreference(PreferenceHandler.PreferenceKey.TIME_STARTED);
     }
 
-    public int getIntervalFromPreferences() {
-        return getPreferenceHandler().getAppSharedPreferences().getInt(
-                getString(R.string.pref_alarm_interval_key),
-                getResources().getInteger(R.integer.time_to_alarm));
+    public long getIntervalFromPreferences() {
+        return getPreferenceHandler().getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
     }
 
     @Override
@@ -86,9 +82,9 @@ public class ClockFragment extends BaseFragment {
         final View view = inflater.inflate(R.layout.fragment_clock, container, false);
 
         // create 2 clock views implementing the same interface
-        mAnalogClock = (ErgoAnalogClock) view.findViewById(R.id.analogClock);
-        mDigitalClock = (ErgoDigitalClock) view.findViewById(R.id.digitalClock);
-        mFusionClock = (ErgoFusionClock) view.findViewById(R.id.fusionClock);
+        mAnalogClock = (AnalogClock) view.findViewById(R.id.analogClock);
+        mDigitalClock = (DigitalClock) view.findViewById(R.id.digitalClock);
+        mFusionClock = (FusionClock) view.findViewById(R.id.fusionClock);
         return view;
     }
 
@@ -105,31 +101,28 @@ public class ClockFragment extends BaseFragment {
         registerResponseReceiver();
 
         // read the clock preferences from the shared preference object
-        mClockPreference = getPreferenceHandler().getAppSharedPreferences().getString(
-                getActivity().getString(R.string.pref_clock_type_key),
-                getActivity().getString(R.string.pref_clock_type_default));
         AppLog.d("Preference is " + mClockPreference);
-
+        mClockPreference = getPreferenceHandler().getStringPreference(PreferenceHandler.PreferenceKey.CLOCK_TYPE);
         // Set clock by preference
         if (mClockPreference.equals(getActivity().getString(R.string.clock_digital))) {
             mAnalogClock.setVisibility(View.GONE);
             mFusionClock.setVisibility(View.GONE);
             mDigitalClock.setVisibility(View.VISIBLE);
-            mCurrentClockInterface = mDigitalClock;
+            mCurrentClock = mDigitalClock;
         } else if (mClockPreference.equals(getActivity().getString(R.string.clock_fusion))) {
             mAnalogClock.setVisibility(View.GONE);
             mDigitalClock.setVisibility(View.GONE);
             mFusionClock.setVisibility(View.VISIBLE);
-            mCurrentClockInterface = mFusionClock;
+            mCurrentClock = mFusionClock;
         } else {
             mAnalogClock.setVisibility(View.VISIBLE);
             mDigitalClock.setVisibility(View.GONE);
             mFusionClock.setVisibility(View.GONE);
-            mCurrentClockInterface = mAnalogClock;
+            mCurrentClock = mAnalogClock;
         }
 
         // set an initial alarm indication
-        mCurrentClockInterface.setMinutesToAlarm(getIntervalFromPreferences());
+        mCurrentClock.setMinutesToAlarm(getIntervalFromPreferences());
 
         // Resume the clock only if step service is still running
         if (StepService.isServiceRunning()) {
@@ -159,7 +152,7 @@ public class ClockFragment extends BaseFragment {
      */
     private void pauseTheClock() {
         mToastHelper.dismissActiveToasts();
-        mCurrentClockInterface.pauseClock();
+        mCurrentClock.pauseClock();
     }
 
     /**
@@ -181,15 +174,15 @@ public class ClockFragment extends BaseFragment {
      *
      * @param time
      */
-    private void startTheClock(final long time, final int interval) {
-        mCurrentClockInterface.startClock(time, interval);
+    private void startTheClock(final long time, final long interval) {
+        mCurrentClock.startClock(time, interval);
     }
 
     /**
      * Send the command to stop the clock to the interface and toast the time ran
      */
     private void stopTheClock() {
-        final long timeRunning = mCurrentClockInterface.getTimeRunning();
+        final long timeRunning = mCurrentClock.getTimeRunning();
 
 
         // create a report message for the toast
@@ -199,7 +192,7 @@ public class ClockFragment extends BaseFragment {
             mToastHelper.makeInfoToast(sb);
         }
         // subsequently stop the clock
-        mCurrentClockInterface.stopClock();
+        mCurrentClock.stopClock();
     }
 
     /**

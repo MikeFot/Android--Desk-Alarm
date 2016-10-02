@@ -1,36 +1,35 @@
 package com.michaelfotiadis.deskalarm.views;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RemoteViews.RemoteView;
 
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
-import com.michaelfotiadis.deskalarm.ui.base.core.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
-
-import java.util.Calendar;
 
 /**
  * This widget display an analogue clock with two hands for hours and
  * minutes.
  */
 @RemoteView
-public class ErgoAnalogClock extends View implements ErgoClockInterface {
+public class AnalogClock extends View implements Clock {
 
-    private final long HANDLER_UPDATE_INTERVAL = 1000;
+    private static final long HANDLER_UPDATE_INTERVAL = 1000;
 
     private final PreferenceHandler mPreferenceHandler;
     private final Handler mHandler = new Handler();
+    private final ClockModelInstance mClockInstance = new ClockModelInstance();
     // drawable fields
     private Drawable mHourHand;
     private Drawable mMinuteHand;
@@ -41,12 +40,9 @@ public class ErgoAnalogClock extends View implements ErgoClockInterface {
     private int mDialWidth;
     private int mDialHeight;
     private boolean mChanged;
-    // color fields
-    private int mOverlayColor;
     private int mShiftedOverlayColor;
     private int mLighterOverlayColor;
     private long mTimeRunning;
-    private final ClockModelInstance mClockInstance = new ClockModelInstance();
     private long mStartTime = 0;
     private final Runnable mRunnable = new Runnable() {
         @Override
@@ -55,41 +51,38 @@ public class ErgoAnalogClock extends View implements ErgoClockInterface {
             updateTime();
         }
     };
-    private int mInterval;
+    private long mInterval;
 
-    public ErgoAnalogClock(final Context context) {
+    public AnalogClock(final Context context) {
         super(context);
         mPreferenceHandler = new PreferenceHandler(context);
     }
 
-    public ErgoAnalogClock(final Context context, final AttributeSet attrs) {
+    public AnalogClock(final Context context, final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    private ErgoAnalogClock(final Context context, final AttributeSet attrs, final int defStyle) {
+    private AnalogClock(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         mPreferenceHandler = new PreferenceHandler(context);
-        final Resources resources = context.getResources();
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AnalogClock, defStyle, 0);
-        mDial = resources.getDrawable(R.drawable.clock_dial);
-        mHourHand = resources.getDrawable(R.drawable.clock_hand_hour);
-        mMinuteHand = resources.getDrawable(R.drawable.clock_hand_minute);
-        mSecondHand = resources.getDrawable(R.drawable.clock_hand_second);
+        mDial = ContextCompat.getDrawable(context, R.drawable.clock_dial);
+        mHourHand = ContextCompat.getDrawable(context, R.drawable.clock_hand_hour);
+        mMinuteHand = ContextCompat.getDrawable(context, R.drawable.clock_hand_minute);
+        mSecondHand = ContextCompat.getDrawable(context, R.drawable.clock_hand_second);
 
         // set the 2 alarm hands
-        mAlarmHandHours = resources.getDrawable(R.drawable.clock_hand_alarm_hours);
-        mAlarmHandMinutes = resources.getDrawable(R.drawable.clock_hand_alarm_minutes);
+        mAlarmHandHours = ContextCompat.getDrawable(context, R.drawable.clock_hand_alarm_hours);
+        mAlarmHandMinutes = ContextCompat.getDrawable(context, R.drawable.clock_hand_alarm_minutes);
 
         mDialWidth = mDial.getIntrinsicWidth();
         mDialHeight = mDial.getIntrinsicHeight();
         typedArray.recycle();
 
-        final String hexColour = mPreferenceHandler.getAppSharedPreferences().getString(
-                getContext().getString(R.string.pref_font_color_key),
-                getContext().getString(R.string.pref_font_color_default_value));
-        mOverlayColor = Color.parseColor(hexColour);
-        mShiftedOverlayColor = ColorUtils.getRightBitShiftedColor(mOverlayColor);
-        mLighterOverlayColor = ColorUtils.getLighterColor(mOverlayColor);
+        final String hexColor = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.FONT_COLOR);
+        final int overlayColor = Color.parseColor(hexColor);
+        mShiftedOverlayColor = ColorUtils.getRightBitShiftedColor(overlayColor);
+        mLighterOverlayColor = ColorUtils.getLighterColor(overlayColor);
     }
 
     /**
@@ -97,8 +90,8 @@ public class ErgoAnalogClock extends View implements ErgoClockInterface {
      */
     @Override
     public void updateTime() {
-        setTimeRunning((Calendar.getInstance().getTimeInMillis() -
-                mStartTime) / 1000);
+        // TODO replace with TimeUnit
+        setTimeRunning((System.currentTimeMillis() - mStartTime) / 1000);
 
         if (mStartTime == 0) {
             mClockInstance.reset();
@@ -131,8 +124,7 @@ public class ErgoAnalogClock extends View implements ErgoClockInterface {
     }
 
     @Override
-    public void startClock(final long startTime, final int minutesToAlarm) {
-
+    public void startClock(final long startTime, final long minutesToAlarm) {
         mStartTime = startTime;
         mInterval = minutesToAlarm;
         mHandler.post(mRunnable);
@@ -156,7 +148,7 @@ public class ErgoAnalogClock extends View implements ErgoClockInterface {
     }
 
     @Override
-    public void setMinutesToAlarm(final int minutesToAlarm) {
+    public void setMinutesToAlarm(final long minutesToAlarm) {
         mInterval = minutesToAlarm;
     }
 

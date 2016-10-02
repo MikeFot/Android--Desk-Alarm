@@ -5,21 +5,21 @@
                 android:padding="@dimen/padding"
                 android:orientation="vertical">
 
-    <com.michaelfotiadis.deskalarm.views.ErgoAnalogClock
+    <com.michaelfotiadis.deskalarm.views.AnalogClock
         android:id="@+id/analogClock"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
         android:visibility="gone"/>
 
-    <com.michaelfotiadis.deskalarm.views.ErgoFusionClock
+    <com.michaelfotiadis.deskalarm.views.FusionClock
         android:id="@+id/fusionClock"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
         android:visibility="gone"/>
 
-    <com.michaelfotiadis.deskalarm.views.ErgoDigitalClock
+    <com.michaelfotiadis.deskalarm.views.DigitalClock
         android:id="@+id/digitalClock"
         style="@style/DigitalClockTextView"
         android:layout_width="fill_parent"

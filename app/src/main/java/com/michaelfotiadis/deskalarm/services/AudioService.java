@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 
-import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.ui.base.core.Core;
 import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class AudioService extends IntentService {
@@ -22,9 +22,9 @@ public class AudioService extends IntentService {
 
     @Override
     protected void onHandleIntent(final Intent intent) {
-        final String preference = mCore.getPreferenceHandler().getAppSharedPreferences().getString(
-                getString(R.string.pref_ringtones_key),
-                getString(R.string.pref_ringtones_default));
+
+        final String preference = mCore.getPreferenceHandler().getStringPreference(PreferenceHandler.PreferenceKey.RINGTONE);
+
         if (preference.length() < 1) {
             this.stopSelf();
         }

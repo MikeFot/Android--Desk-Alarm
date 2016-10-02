@@ -1,5 +1,6 @@
 package com.michaelfotiadis.deskalarm.ui.base.core;
 
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.utils.FileHelper;
 
 /**
