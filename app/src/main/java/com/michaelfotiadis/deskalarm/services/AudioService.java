@@ -8,7 +8,7 @@ import android.media.MediaPlayer;
 
 import com.michaelfotiadis.deskalarm.ui.base.core.Core;
 import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
-import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class AudioService extends IntentService {
@@ -23,7 +23,7 @@ public class AudioService extends IntentService {
     @Override
     protected void onHandleIntent(final Intent intent) {
 
-        final String preference = mCore.getPreferenceHandler().getStringPreference(PreferenceHandler.PreferenceKey.RINGTONE);
+        final String preference = mCore.getPreferenceHandler().getStringPreference(PreferenceHandlerImpl.PreferenceKey.RINGTONE);
 
         if (preference.length() < 1) {
             this.stopSelf();

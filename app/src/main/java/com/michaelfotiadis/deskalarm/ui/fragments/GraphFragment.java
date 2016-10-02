@@ -18,6 +18,7 @@ import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.ui.base.fragment.BaseFragment;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 import com.michaelfotiadis.deskalarm.views.GraphFactory;
@@ -69,7 +70,7 @@ public class GraphFragment extends BaseFragment implements OnClickListener {
     @Override
     public void onAttach(final Context context) {
         super.onAttach(context);
-        mPreferenceHandler = new PreferenceHandler(context);
+        mPreferenceHandler = new PreferenceHandlerImpl(context);
     }
 
     @Override
@@ -180,7 +181,7 @@ public class GraphFragment extends BaseFragment implements OnClickListener {
             }
             final int textColour;
 
-            final long interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+            final long interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
             // calculate a threshold for the graph gradient limit
             int threshold = (int) (interval * 0.1);
             if (threshold < 1) {

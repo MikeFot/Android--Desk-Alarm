@@ -11,6 +11,7 @@ import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
 import com.michaelfotiadis.deskalarm.ui.base.core.ErgoDataManager;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -30,7 +31,7 @@ public class GraphFactory {
                                        final PreferenceHandler preferenceHandler,
                                        final ErgoDataManager dataManager) {
 
-        final Long interval = preferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+        final Long interval = preferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
 
         // calculate a threshold for the graph gradient limit
         int wakeThreshold = (int) (interval * 0.1);

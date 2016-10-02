@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
@@ -36,14 +37,14 @@ public class DigitalClock extends TextView implements Clock {
     public DigitalClock(final Context context) {
         super(context);
         mClockInstance = new ClockModelInstance();
-        mPreferenceHandler = new PreferenceHandler(context);
+        mPreferenceHandler = new PreferenceHandlerImpl(context);
         init();
     }
 
     public DigitalClock(final Context context, final AttributeSet attrs) {
         super(context, attrs);
         mClockInstance = new ClockModelInstance();
-        mPreferenceHandler = new PreferenceHandler(context);
+        mPreferenceHandler = new PreferenceHandlerImpl(context);
         init();
 
 
@@ -52,7 +53,7 @@ public class DigitalClock extends TextView implements Clock {
     public DigitalClock(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         mClockInstance = new ClockModelInstance();
-        mPreferenceHandler = new PreferenceHandler(context);
+        mPreferenceHandler = new PreferenceHandlerImpl(context);
         init();
     }
 
@@ -135,7 +136,7 @@ public class DigitalClock extends TextView implements Clock {
     private void init() {
         final int defaultFontSize = (int) getResources().getDimension(R.dimen.digital_clock_font_size);
 
-        final String fontName = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.FONT_TYPE);
+        final String fontName = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.FONT_TYPE);
         final Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), String.format("fonts/%s", fontName));
         try {
             setTypeface(typeface);
@@ -175,7 +176,7 @@ public class DigitalClock extends TextView implements Clock {
 		}
 		*/
 
-        final String fontColour = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.FONT_COLOR);
+        final String fontColour = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
         try {
             this.setTextColor(Color.parseColor(fontColour));
         } catch (final Exception e) {

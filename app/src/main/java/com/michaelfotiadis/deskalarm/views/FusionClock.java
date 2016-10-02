@@ -13,6 +13,7 @@ import android.widget.RemoteViews.RemoteView;
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
@@ -59,7 +60,7 @@ public class FusionClock extends View implements Clock {
 
     public FusionClock(final Context context) {
         super(context);
-        mPreferenceHandler = new PreferenceHandler(context);
+        mPreferenceHandler = new PreferenceHandlerImpl(context);
     }
 
     public FusionClock(final Context context, final AttributeSet attrs) {
@@ -69,7 +70,7 @@ public class FusionClock extends View implements Clock {
     private FusionClock(final Context context, final AttributeSet attrs,
                         final int defStyle) {
         super(context, attrs, defStyle);
-        mPreferenceHandler = new PreferenceHandler(context);
+        mPreferenceHandler = new PreferenceHandlerImpl(context);
         mDial = ContextCompat.getDrawable(context, R.drawable.clock_fusion_dial_r_three);
         mHourHand = ContextCompat.getDrawable(context, R.drawable.clock_fusion_hour_hand);
         mMinuteHand = ContextCompat.getDrawable(context, R.drawable.clock_fusion_hand_minutes);
@@ -80,7 +81,7 @@ public class FusionClock extends View implements Clock {
         mDialWidth = mDial.getIntrinsicWidth();
         mDialHeight = mDial.getIntrinsicHeight();
 
-        final String hexColour = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.FONT_COLOR);
+        final String hexColour = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
         mOverlayColor = Color.parseColor(hexColour);
 
         mLighterOverlayColor = ColorUtils.getLighterColor(mOverlayColor);

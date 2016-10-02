@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.services.step.StepService;
-import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.ui.base.fragment.BaseFragment;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.ToastHelper;
@@ -56,11 +56,11 @@ public class ClockFragment extends BaseFragment {
      * @return Long value of service time started from Shared Preferences
      */
     public long getTimeStartedFromPreferences() {
-        return getPreferenceHandler().getLongPreference(PreferenceHandler.PreferenceKey.TIME_STARTED);
+        return getPreferenceHandler().getLongPreference(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED);
     }
 
     public long getIntervalFromPreferences() {
-        return getPreferenceHandler().getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+        return getPreferenceHandler().getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class ClockFragment extends BaseFragment {
 
         // read the clock preferences from the shared preference object
         AppLog.d("Preference is " + mClockPreference);
-        mClockPreference = getPreferenceHandler().getStringPreference(PreferenceHandler.PreferenceKey.CLOCK_TYPE);
+        mClockPreference = getPreferenceHandler().getStringPreference(PreferenceHandlerImpl.PreferenceKey.CLOCK_TYPE);
         // Set clock by preference
         if (mClockPreference.equals(getActivity().getString(R.string.clock_digital))) {
             mAnalogClock.setVisibility(View.GONE);

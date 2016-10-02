@@ -14,6 +14,7 @@ import android.widget.RemoteViews.RemoteView;
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
@@ -55,7 +56,7 @@ public class AnalogClock extends View implements Clock {
 
     public AnalogClock(final Context context) {
         super(context);
-        mPreferenceHandler = new PreferenceHandler(context);
+        mPreferenceHandler = new PreferenceHandlerImpl(context);
     }
 
     public AnalogClock(final Context context, final AttributeSet attrs) {
@@ -64,7 +65,7 @@ public class AnalogClock extends View implements Clock {
 
     private AnalogClock(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
-        mPreferenceHandler = new PreferenceHandler(context);
+        mPreferenceHandler = new PreferenceHandlerImpl(context);
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.AnalogClock, defStyle, 0);
         mDial = ContextCompat.getDrawable(context, R.drawable.clock_dial);
         mHourHand = ContextCompat.getDrawable(context, R.drawable.clock_hand_hour);
@@ -79,7 +80,7 @@ public class AnalogClock extends View implements Clock {
         mDialHeight = mDial.getIntrinsicHeight();
         typedArray.recycle();
 
-        final String hexColor = mPreferenceHandler.getStringPreference(PreferenceHandler.PreferenceKey.FONT_COLOR);
+        final String hexColor = mPreferenceHandler.getStringPreference(PreferenceHandlerImpl.PreferenceKey.FONT_COLOR);
         final int overlayColor = Color.parseColor(hexColor);
         mShiftedOverlayColor = ColorUtils.getRightBitShiftedColor(overlayColor);
         mLighterOverlayColor = ColorUtils.getLighterColor(overlayColor);

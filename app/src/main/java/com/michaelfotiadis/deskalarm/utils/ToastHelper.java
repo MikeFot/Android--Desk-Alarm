@@ -4,8 +4,9 @@ import android.app.Activity;
 
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
-import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager;
+import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManagerImpl;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 public class ToastHelper {
@@ -16,7 +17,7 @@ public class ToastHelper {
 
     public ToastHelper(final Activity activity) {
         this.mActivity = activity;
-        this.mPreferenceHandler = new PreferenceHandler(activity);
+        this.mPreferenceHandler = new PreferenceHandlerImpl(activity);
     }
 
     public SuperActivityToast getToast() {
@@ -116,7 +117,7 @@ public class ToastHelper {
      *
      * @param mode enumerator
      */
-    public void makeToast(final ErgoAlarmManager.ALARM_MODE mode) {
+    public void makeToast(final ErgoAlarmManagerImpl.ALARM_MODE mode) {
         if (mSuperActivityToast != null && mSuperActivityToast.isShowing()) {
             SuperActivityToast.cancelAllSuperToasts();
 
@@ -125,7 +126,7 @@ public class ToastHelper {
 
         switch (mode) {
             case NORMAL:
-                final Long interval = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+                final Long interval = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 makeInfoToast(String.format(
                         "Alarm set for %s from now",
                         PrimitiveConversions.getTimeStringFromSeconds(interval * 60)),
@@ -133,7 +134,7 @@ public class ToastHelper {
                 break;
             case REPEAT:
                 // get the stored value from shared preferences
-                final Long alarmDuration = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+                final Long alarmDuration = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 // make a card toast
                 makeInfoToast(String.format(
                         "Repeating for %s from now",
@@ -142,7 +143,7 @@ public class ToastHelper {
                 break;
             case SNOOZE:
                 // get the stored value from shared preferences
-                final Long snoozeDuration = mPreferenceHandler.getLongPreference(PreferenceHandler.PreferenceKey.SNOOZE_INTERVAL);
+                final Long snoozeDuration = mPreferenceHandler.getLongPreference(PreferenceHandlerImpl.PreferenceKey.SNOOZE_INTERVAL);
                 // make a card toast
                 mSuperActivityToast = makeInfoToast(
                         String.format(

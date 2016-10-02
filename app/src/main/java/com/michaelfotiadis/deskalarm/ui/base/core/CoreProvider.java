@@ -3,6 +3,7 @@ package com.michaelfotiadis.deskalarm.ui.base.core;
 import android.content.Context;
 
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.FileHelper;
 
 /**
@@ -29,7 +30,7 @@ public class CoreProvider implements Core {
     @Override
     public PreferenceHandler getPreferenceHandler() {
         if (mPreferenceHandler == null) {
-            mPreferenceHandler = new PreferenceHandler(mContext);
+            mPreferenceHandler = new PreferenceHandlerImpl(mContext);
         }
         return mPreferenceHandler;
     }
@@ -37,7 +38,7 @@ public class CoreProvider implements Core {
     @Override
     public ErgoServiceManager getServiceManager() {
         if (mServiceManager == null) {
-            mServiceManager = new ErgoServiceManager(mContext);
+            mServiceManager = new ErgoServiceManagerImpl(mContext);
         }
         return mServiceManager;
     }
@@ -45,7 +46,7 @@ public class CoreProvider implements Core {
     @Override
     public ErgoNotificationManager getNotificationManager() {
         if (mNotificationManager == null) {
-            mNotificationManager = new ErgoNotificationManager(mContext);
+            mNotificationManager = new ErgoNotificationManagerImpl(mContext);
         }
         return mNotificationManager;
     }
@@ -53,7 +54,7 @@ public class CoreProvider implements Core {
     @Override
     public ErgoAlarmManager getAlarmManager() {
         if (mAlarmManager == null) {
-            mAlarmManager = new ErgoAlarmManager(mContext);
+            mAlarmManager = new ErgoAlarmManagerImpl(mContext);
         }
         return mAlarmManager;
     }
@@ -69,7 +70,7 @@ public class CoreProvider implements Core {
     @Override
     public ErgoDataManager getDataManager() {
         if (mDataManager == null) {
-            mDataManager = new ErgoDataManager(mContext, getPreferenceHandler(), getFileHelper());
+            mDataManager = new ErgoDataManagerImpl(mContext, getPreferenceHandler(), getFileHelper());
         }
         return mDataManager;
     }
