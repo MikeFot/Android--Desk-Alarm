@@ -1,70 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/chart_layout"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@null"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/text_view_no_data"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:gravity="center"
-            android:padding="2dp"
-            android:text="@string/label_no_data_yet"
-            android:textAppearance="?android:attr/textAppearanceMedium"/>
-    </LinearLayout>
+        <LinearLayout
 
-    <LinearLayout
-        android:id="@+id/zoom_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/window_background"
-        android:gravity="center"
-        android:orientation="horizontal">
+            android:id="@+id/zoom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/window_background"
+            android:gravity="center">
 
-        <ImageButton
-            android:id="@+id/custom_zoom_in"
-            android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/custom_zoom_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/descriptor_zoom_in_button"
+                android:paddingEnd="@dimen/zoom_button_padding"
+                android:paddingLeft="@dimen/zoom_button_padding"
+                android:paddingRight="@dimen/zoom_button_padding"
+                android:paddingStart="@dimen/zoom_button_padding"
+                android:src="@drawable/ic_action_zoom_in"/>
+
+            <ImageButton
+                android:id="@+id/custom_zoom_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/descriptor_zoom_reset_button"
+                android:paddingEnd="@dimen/zoom_button_padding"
+                android:paddingLeft="@dimen/zoom_button_padding"
+                android:paddingRight="@dimen/zoom_button_padding"
+                android:paddingStart="@dimen/zoom_button_padding"
+                android:src="@drawable/ic_action_zoom_reset"/>
+
+            <ImageButton
+                android:id="@+id/custom_zoom_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/descriptor_zoom_out_button"
+                android:paddingEnd="@dimen/zoom_button_padding"
+                android:paddingLeft="@dimen/zoom_button_padding"
+                android:paddingRight="@dimen/zoom_button_padding"
+                android:paddingStart="@dimen/zoom_button_padding"
+                android:src="@drawable/ic_action_zoom_out"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_below="@id/zoom_layout"
+            android:id="@+id/chart_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:paddingStart="@dimen/zoom_button_padding"
-            android:paddingEnd="@dimen/zoom_button_padding"
-            android:paddingRight="@dimen/zoom_button_padding"
-            android:paddingLeft="@dimen/zoom_button_padding"
-            android:src="@drawable/ic_action_zoom_in"
-            android:contentDescription="@string/descriptor_zoom_in_button"/>
+            android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/custom_zoom_reset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:paddingStart="@dimen/zoom_button_padding"
-            android:paddingEnd="@dimen/zoom_button_padding"
-            android:paddingRight="@dimen/zoom_button_padding"
-            android:paddingLeft="@dimen/zoom_button_padding"
-            android:src="@drawable/ic_action_zoom_reset"
-            android:contentDescription="@string/descriptor_zoom_reset_button"/>
+            <TextView
+                android:id="@+id/text_view_no_data"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:padding="2dp"
+                android:text="@string/label_no_data_yet"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/custom_zoom_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:paddingStart="@dimen/zoom_button_padding"
-            android:paddingEnd="@dimen/zoom_button_padding"
-            android:paddingRight="@dimen/zoom_button_padding"
-            android:paddingLeft="@dimen/zoom_button_padding"
-            android:src="@drawable/ic_action_zoom_out"
-            android:contentDescription="@string/descriptor_zoom_out_button"/>
-    </LinearLayout>
 
-</LinearLayout>
+    </RelativeLayout>
+
+</android.support.v4.widget.NestedScrollView>
