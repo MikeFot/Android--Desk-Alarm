@@ -1,6 +1,5 @@
 package com.michaelfotiadis.deskalarm.ui.base.core;
 
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -17,18 +16,18 @@ import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.util.concurrent.TimeUnit;
 
-public final class ErgoAlarmManagerImpl implements ErgoAlarmManager {
+public final class AlarmManagerImpl implements AlarmManager {
 
     private final Context mContext;
     private final PreferenceHandler mPreferenceHandler;
-    private final ErgoDataManagerImpl mDataManager;
-    private final AlarmManager mAlarmManager;
+    private final DataManagerImpl mDataManager;
+    private final android.app.AlarmManager mAlarmManager;
 
-    /*package*/ ErgoAlarmManagerImpl(final Context context) {
+    /*package*/ AlarmManagerImpl(final Context context) {
         this.mContext = context;
         this.mPreferenceHandler = new PreferenceHandlerImpl(context);
-        this.mDataManager = new ErgoDataManagerImpl(context);
-        this.mAlarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        this.mDataManager = new DataManagerImpl(context);
+        this.mAlarmManager = (android.app.AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
     }
 
     @Override
@@ -79,7 +78,7 @@ public final class ErgoAlarmManagerImpl implements ErgoAlarmManager {
             final Intent intent = new Intent(mContext, AlarmService.class);
             intent.putExtra(Payloads.ALARM_PAYLOAD.getString(), Requests.REQUEST_CODE_1.getCode());
             final PendingIntent operation = PendingIntent.getService(mContext, 0, intent, 0);
-            mAlarmManager.set(AlarmManager.RTC_WAKEUP, targetTime, operation);
+            mAlarmManager.set(android.app.AlarmManager.RTC_WAKEUP, targetTime, operation);
 
             // send a broadcast
             broadcastAlarmMode(mode);
@@ -100,7 +99,7 @@ public final class ErgoAlarmManagerImpl implements ErgoAlarmManager {
 
         mPreferenceHandler.writeLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED, 0L);
 
-        final AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        final android.app.AlarmManager alarmManager = (android.app.AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
         final Intent intent = new Intent(mContext, AlarmService.class);
 

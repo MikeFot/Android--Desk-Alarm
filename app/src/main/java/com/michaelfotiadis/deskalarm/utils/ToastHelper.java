@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
-import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManagerImpl;
+import com.michaelfotiadis.deskalarm.ui.base.core.AlarmManagerImpl;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
@@ -18,10 +18,6 @@ public class ToastHelper {
     public ToastHelper(final Activity activity) {
         this.mActivity = activity;
         this.mPreferenceHandler = new PreferenceHandlerImpl(activity);
-    }
-
-    public SuperActivityToast getToast() {
-        return mSuperActivityToast;
     }
 
     /**
@@ -117,7 +113,7 @@ public class ToastHelper {
      *
      * @param mode enumerator
      */
-    public void makeToast(final ErgoAlarmManagerImpl.ALARM_MODE mode) {
+    public void makeToast(final AlarmManagerImpl.ALARM_MODE mode) {
         if (mSuperActivityToast != null && mSuperActivityToast.isShowing()) {
             SuperActivityToast.cancelAllSuperToasts();
 

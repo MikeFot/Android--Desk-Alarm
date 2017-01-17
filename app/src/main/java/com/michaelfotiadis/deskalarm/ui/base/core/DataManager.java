@@ -7,7 +7,7 @@ import java.util.SortedMap;
 /**
  *
  */
-public interface ErgoDataManager {
+public interface DataManager {
     @SuppressWarnings("MethodMayBeStatic")
     SortedMap<String, TimeModelInstance> retrieveDailyData();
 

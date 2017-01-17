@@ -24,22 +24,32 @@ public class TimePickerDialogWrapper {
     private final AlertDialog mDialog;
     private final int mOriginalSetting;
     private final PreferenceHandler mPreferenceHandler;
+    private final PreferenceHandler.PreferenceKey mKey;
 
-    public static TimePickerDialogWrapper newInstance(final Activity activity, final PreferenceHandler preferenceHandler) {
-        return new TimePickerDialogWrapper(activity, preferenceHandler);
+    public static TimePickerDialogWrapper newAlarmInstance(final Activity activity,
+                                                           final PreferenceHandler preferenceHandler) {
+        return new TimePickerDialogWrapper(activity, preferenceHandler, PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
     }
 
-    public TimePickerDialogWrapper(final Activity activity, final PreferenceHandler preferenceHandler) {
+    public static TimePickerDialogWrapper newSnoozeInstance(final Activity activity,
+                                                            final PreferenceHandler preferenceHandler) {
+        return new TimePickerDialogWrapper(activity, preferenceHandler, PreferenceHandler.PreferenceKey.SNOOZE_INTERVAL);
+    }
 
+    private TimePickerDialogWrapper(final Activity activity,
+                                    final PreferenceHandler preferenceHandler,
+                                    final PreferenceHandler.PreferenceKey key) {
+
+        mKey = key;
         mPreferenceHandler = preferenceHandler;
 
-        final int preferencesTime = mPreferenceHandler.getInt(PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+        final int preferencesTime = mPreferenceHandler.getInt(mKey);
 
 
         if (preferencesTime > MAX_TIME) {
             mOriginalSetting = MAX_TIME;
         } else {
-            mOriginalSetting = (int) preferencesTime;
+            mOriginalSetting = preferencesTime;
         }
 
         final int hour = mOriginalSetting / 60;
@@ -79,7 +89,20 @@ public class TimePickerDialogWrapper {
 
 
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setTitle(context.getString(R.string.dialog_set_interval_between_alarms));
+
+        final String title;
+        switch (mKey) {
+
+            case ALARM_INTERVAL:
+                title = context.getString(R.string.dialog_set_interval_between_alarms);
+                break;
+            case SNOOZE_INTERVAL:
+                title = context.getString(R.string.dialog_set_snooze_time);
+                break;
+            default:
+                title = context.getString(R.string.dialog_set_interval_between_alarms);
+        }
+        alertDialogBuilder.setTitle(title);
         alertDialogBuilder.setView(linearLayout);
         alertDialogBuilder
                 .setCancelable(true)
@@ -122,7 +145,7 @@ public class TimePickerDialogWrapper {
         if (timeToAlarm <= 0) {
             timeToAlarm = 1;
         }
-        mPreferenceHandler.writeInt(PreferenceHandler.PreferenceKey.ALARM_INTERVAL, timeToAlarm);
+        mPreferenceHandler.writeInt(mKey, timeToAlarm);
     }
 
 }

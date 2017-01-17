@@ -10,13 +10,13 @@ public interface Core {
 
     PreferenceHandler getPreferenceHandler();
 
-    ErgoServiceManager getServiceManager();
+    ServiceManager getServiceManager();
 
-    ErgoNotificationManager getNotificationManager();
+    NotificationManager getNotificationManager();
 
-    ErgoAlarmManager getAlarmManager();
+    AlarmManager getAlarmManager();
 
     FileHelper getFileHelper();
 
-    ErgoDataManager getDataManager();
+    DataManager getDataManager();
 }

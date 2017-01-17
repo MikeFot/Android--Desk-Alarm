@@ -7,11 +7,11 @@ import com.michaelfotiadis.deskalarm.services.AudioService;
 import com.michaelfotiadis.deskalarm.services.step.StepService;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
-public class ErgoServiceManagerImpl implements ErgoServiceManager {
+public class ServiceManagerImpl implements ServiceManager {
 
     private final Context mContext;
 
-    /*package*/ ErgoServiceManagerImpl(final Context context) {
+    /*package*/ ServiceManagerImpl(final Context context) {
         this.mContext = context;
     }
 

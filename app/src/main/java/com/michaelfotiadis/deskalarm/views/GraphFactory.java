@@ -9,7 +9,7 @@ import android.util.TypedValue;
 
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
-import com.michaelfotiadis.deskalarm.ui.base.core.ErgoDataManager;
+import com.michaelfotiadis.deskalarm.ui.base.core.DataManager;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 
@@ -29,7 +29,7 @@ public class GraphFactory {
     @SuppressWarnings("MethodMayBeStatic")
     public GraphicalView generateChart(final Context context,
                                        final PreferenceHandler preferenceHandler,
-                                       final ErgoDataManager dataManager) {
+                                       final DataManager dataManager) {
 
         final int interval = preferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
 

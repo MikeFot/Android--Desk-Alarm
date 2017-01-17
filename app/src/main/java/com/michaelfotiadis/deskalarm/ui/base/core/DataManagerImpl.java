@@ -16,7 +16,7 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class ErgoDataManagerImpl implements ErgoDataManager {
+public class DataManagerImpl implements DataManager {
 
     // minimum value required to store to memory
     private static final long MINIMUM_INTERVAL = 1;
@@ -25,11 +25,11 @@ public class ErgoDataManagerImpl implements ErgoDataManager {
     private final PreferenceHandler mPreferenceHandler;
     private final FileHelper mFileHelper;
 
-    /*package*/ ErgoDataManagerImpl(final Context context) {
+    /*package*/ DataManagerImpl(final Context context) {
         this(context, new PreferenceHandlerImpl(context), new FileHelper(context));
     }
 
-    /*package*/ ErgoDataManagerImpl(final Context context, final PreferenceHandler preferenceHandler, final FileHelper fileHelper) {
+    /*package*/ DataManagerImpl(final Context context, final PreferenceHandler preferenceHandler, final FileHelper fileHelper) {
         this.mContext = context;
         this.mPreferenceHandler = preferenceHandler;
         this.mFileHelper = fileHelper;

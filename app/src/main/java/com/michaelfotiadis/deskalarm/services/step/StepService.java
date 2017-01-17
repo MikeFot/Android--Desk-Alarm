@@ -17,9 +17,9 @@ import android.os.PowerManager.WakeLock;
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.model.Payloads;
+import com.michaelfotiadis.deskalarm.ui.base.core.AlarmManager.ALARM_MODE;
 import com.michaelfotiadis.deskalarm.ui.base.core.Core;
 import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
-import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager.ALARM_MODE;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 

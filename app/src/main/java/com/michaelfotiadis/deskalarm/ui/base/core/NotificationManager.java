@@ -5,7 +5,7 @@ import android.annotation.SuppressLint;
 /**
  *
  */
-public interface ErgoNotificationManager {
+public interface NotificationManager {
     void cancelAlarmNotification();
 
     @SuppressLint("InlinedApi")

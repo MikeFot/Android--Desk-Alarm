@@ -27,7 +27,7 @@ import com.michaelfotiadis.deskalarm.model.Payloads;
 import com.michaelfotiadis.deskalarm.services.step.StepService;
 import com.michaelfotiadis.deskalarm.ui.activities.settings.SettingsActivity;
 import com.michaelfotiadis.deskalarm.ui.base.activity.BaseActivity;
-import com.michaelfotiadis.deskalarm.ui.base.core.ErgoAlarmManager.ALARM_MODE;
+import com.michaelfotiadis.deskalarm.ui.base.core.AlarmManager.ALARM_MODE;
 import com.michaelfotiadis.deskalarm.ui.base.viewpager.SmartFragmentPagerAdapter;
 import com.michaelfotiadis.deskalarm.ui.base.viewpager.SmartFragmentPagerBinder;
 import com.michaelfotiadis.deskalarm.ui.base.viewpager.SmartFragmentPagerPages;
@@ -65,7 +65,6 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     public void onCreate(final Bundle savedInstanceState) {
         // switch activity theme according to settings
         super.onCreate(savedInstanceState);
-        AppLog.d("OnCreate");
         ButterKnife.bind(this);
         mToastHelper = new ToastHelper(this);
 

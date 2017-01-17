@@ -13,10 +13,10 @@ public class CoreProvider implements Core {
 
     private final Context mContext;
     private PreferenceHandler mPreferenceHandler;
-    private ErgoServiceManager mServiceManager;
-    private ErgoNotificationManager mNotificationManager;
-    private ErgoAlarmManager mAlarmManager;
-    private ErgoDataManager mDataManager;
+    private ServiceManager mServiceManager;
+    private NotificationManager mNotificationManager;
+    private AlarmManager mAlarmManager;
+    private DataManager mDataManager;
     private FileHelper mFileHelper;
 
     public CoreProvider(final Context context) {
@@ -36,25 +36,25 @@ public class CoreProvider implements Core {
     }
 
     @Override
-    public ErgoServiceManager getServiceManager() {
+    public ServiceManager getServiceManager() {
         if (mServiceManager == null) {
-            mServiceManager = new ErgoServiceManagerImpl(mContext);
+            mServiceManager = new ServiceManagerImpl(mContext);
         }
         return mServiceManager;
     }
 
     @Override
-    public ErgoNotificationManager getNotificationManager() {
+    public NotificationManager getNotificationManager() {
         if (mNotificationManager == null) {
-            mNotificationManager = new ErgoNotificationManagerImpl(mContext);
+            mNotificationManager = new NotificationManagerImpl(mContext);
         }
         return mNotificationManager;
     }
 
     @Override
-    public ErgoAlarmManager getAlarmManager() {
+    public AlarmManager getAlarmManager() {
         if (mAlarmManager == null) {
-            mAlarmManager = new ErgoAlarmManagerImpl(mContext);
+            mAlarmManager = new AlarmManagerImpl(mContext);
         }
         return mAlarmManager;
     }
@@ -68,9 +68,9 @@ public class CoreProvider implements Core {
     }
 
     @Override
-    public ErgoDataManager getDataManager() {
+    public DataManager getDataManager() {
         if (mDataManager == null) {
-            mDataManager = new ErgoDataManagerImpl(mContext, getPreferenceHandler(), getFileHelper());
+            mDataManager = new DataManagerImpl(mContext, getPreferenceHandler(), getFileHelper());
         }
         return mDataManager;
     }

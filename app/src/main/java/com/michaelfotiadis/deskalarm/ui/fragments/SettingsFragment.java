@@ -14,7 +14,6 @@ import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.dialogs.ClearDataDialogFragment;
 import com.michaelfotiadis.deskalarm.dialogs.ClearPreferencesDialogFragment;
 import com.michaelfotiadis.deskalarm.dialogs.TimePickerDialogWrapper;
-import com.michaelfotiadis.deskalarm.dialogs.TimeToSnoozeDialogWrapper;
 import com.michaelfotiadis.deskalarm.ui.base.activity.BaseActivity;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
@@ -30,12 +29,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
     private Preference mTimeToSnoozeSetButton;
     private Preference mClearDataButton;
     private Preference mClearPreferenceButton;
-
-
-    public static PreferenceFragmentCompat newInstance() {
-        return new SettingsFragment();
-    }
-
 
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
@@ -141,16 +134,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
      * Starts a number picker dialog for Snooze
      */
     private void showSetSnoozeNumberPickerDialog() {
-        final TimeToSnoozeDialogWrapper dialogWrapper = TimeToSnoozeDialogWrapper.newInstance(getActivity(), getPreferenceScreen().getSharedPreferences());
-        dialogWrapper.show();
+        TimePickerDialogWrapper.newSnoozeInstance(getActivity(), getPreferenceHandler()).show();
     }
 
     /**
      * Starts a number picker dialog for Time to Alarm
      */
     private void showSetAlarmNumberPickerDialog() {
-        final TimePickerDialogWrapper dialogWrapper = TimePickerDialogWrapper.newInstance(getActivity(), getPreferenceHandler());
-        dialogWrapper.show();
+        TimePickerDialogWrapper.newAlarmInstance(getActivity(), getPreferenceHandler()).show();
     }
 
     private PreferenceHandler getPreferenceHandler() {
@@ -159,6 +150,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         } else {
             return new PreferenceHandlerImpl(getContext());
         }
+    }
+
+    public static PreferenceFragmentCompat newInstance() {
+        return new SettingsFragment();
     }
 
 }

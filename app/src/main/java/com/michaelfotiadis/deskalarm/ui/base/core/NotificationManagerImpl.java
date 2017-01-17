@@ -2,7 +2,6 @@ package com.michaelfotiadis.deskalarm.ui.base.core;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -27,7 +26,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class ErgoNotificationManagerImpl implements ErgoNotificationManager {
+public class NotificationManagerImpl implements NotificationManager {
 
     private static final String PEBBLE_INTENT_DESCRIPTOR = "com.getpebble.action.SEND_NOTIFICATION";
     private static final String NOTIFICATION_SENDER_DESCRIPTOR = "com.michaelfotiadis.deskalarm";
@@ -35,12 +34,12 @@ public class ErgoNotificationManagerImpl implements ErgoNotificationManager {
 
     private final Context mContext;
     private final PreferenceHandler mPreferenceHandler;
-    private final NotificationManager mNotificationManager;
+    private final android.app.NotificationManager mNotificationManager;
 
-    /*package*/ ErgoNotificationManagerImpl(final Context context) {
+    /*package*/ NotificationManagerImpl(final Context context) {
         this.mContext = context;
         this.mPreferenceHandler = new PreferenceHandlerImpl(context);
-        this.mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        this.mNotificationManager = (android.app.NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
 

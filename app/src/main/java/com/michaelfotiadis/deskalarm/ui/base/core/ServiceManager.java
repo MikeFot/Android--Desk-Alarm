@@ -3,7 +3,7 @@ package com.michaelfotiadis.deskalarm.ui.base.core;
 /**
  *
  */
-public interface ErgoServiceManager {
+public interface ServiceManager {
     void startStepService();
 
     void stopStepService();

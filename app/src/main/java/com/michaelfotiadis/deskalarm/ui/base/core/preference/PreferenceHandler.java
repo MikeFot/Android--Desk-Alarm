@@ -24,7 +24,7 @@ public interface PreferenceHandler {
 
     void clearPreferences();
 
-    enum PreferenceKey {
+    public enum PreferenceKey {
         RINGTONE,
         SENSOR_MODE,
         TIME_STARTED,

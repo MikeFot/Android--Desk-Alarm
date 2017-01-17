@@ -3,7 +3,7 @@ package com.michaelfotiadis.deskalarm.ui.base.core;
 /**
  *
  */
-public interface ErgoAlarmManager {
+public interface AlarmManager {
     void setAlarm(ALARM_MODE mode);
 
     void cancelAlarm();
