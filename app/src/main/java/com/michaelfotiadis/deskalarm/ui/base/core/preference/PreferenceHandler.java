@@ -14,6 +14,8 @@ public interface PreferenceHandler {
 
     Integer getInt(PreferenceKey key);
 
+    Boolean getBoolean(PreferenceKey key);
+
     void writeInt(PreferenceKey key, Integer value);
 
     void writeLong(PreferenceKey key, Long value);
@@ -32,6 +34,7 @@ public interface PreferenceHandler {
         SNOOZE_INTERVAL,
         FONT_TYPE,
         FONT_COLOR,
-        CLOCK_TYPE
+        CLOCK_TYPE,
+        AUTO_START
     }
 }

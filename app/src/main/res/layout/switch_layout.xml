@@ -1,15 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/switch_layout"
-              android:layout_width="fill_parent"
-              android:layout_height="match_parent"
-              android:orientation="horizontal">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/switch_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
 
-    <Switch
+    <android.support.v7.widget.SwitchCompat
         android:id="@+id/switchForActionBar"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:theme="@style/AppTheme.Switch"
+        app:theme="@style/AppTheme.Switch"
         android:text=""/>
 
 </LinearLayout>

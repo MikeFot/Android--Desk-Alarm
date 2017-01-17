@@ -71,6 +71,11 @@
     <PreferenceCategory
         android:key="@string/pref_category_app_settings_key"
         android:title="@string/pref_category_app_settings_title">
+        <CheckBoxPreference
+            android:key="@string/pref_auto_start_key"
+            android:summary="@string/pref_auto_start_summary"
+            android:defaultValue="false"
+            android:title="@string/pref_auto_start_title" />
         <Preference
             android:key="@string/pref_clear_data_key"
             android:summary="@string/pref_clear_data_summary"

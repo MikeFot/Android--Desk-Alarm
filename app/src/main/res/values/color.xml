@@ -4,14 +4,14 @@
     <color name="primary">@color/md_blue_500</color>
     <color name="primary_dark">@color/md_blue_700</color>
     <color name="primary_light">@color/md_blue_100</color>
-    <color name="accent">@color/md_light_blue_500</color>
+    <color name="accent">@color/md_light_blue_300</color>
 
     <color name="primary_text">@color/md_grey_900</color>
     <color name="secondary_text">@color/md_grey_600</color>
     <color name="tertiary_text">@color/md_grey_400</color>
     <color name="text">@color/md_grey_900</color>
     <color name="icons">@color/md_white_1000</color>
-
+    \
     <drawable name="pressed_gray">@color/md_grey_700</drawable>
     <drawable name="selected_gray">@color/md_grey_500</drawable>
 

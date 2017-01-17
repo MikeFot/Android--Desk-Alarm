@@ -137,6 +137,11 @@
     <string name="pref_screen_app_settings_key">pref_key_app_screen</string>
     <string name="pref_screen_app_settings_summary">Options for deleting user data</string>
     <string name="pref_screen_app_settings_title">Clear Data</string>
+
+    <string name="pref_auto_start_key">pref_key_auto_start</string>
+    <string name="pref_auto_start_summary">Automatically start clock</string>
+    <string name="pref_auto_start_title">Auto-start</string>
+
     <!-- Button Preference: Clear Preferences -->
     <string name="pref_clear_preferences_key">pref_key_clear_preferences</string>
     <string name="pref_clear_preferences_summary">Delete preferences only</string>

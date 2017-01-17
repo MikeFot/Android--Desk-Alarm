@@ -25,6 +25,7 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
     private final Map<PreferenceKey, Pair<String, String>> mStringMap;
     private final Map<PreferenceKey, Pair<String, Long>> mLongMap;
     private final Map<PreferenceKey, Pair<String, Integer>> mIntegerMap;
+    private final Map<PreferenceKey, Pair<String, Boolean>> mBooleanMap;
 
     public PreferenceHandlerImpl(final Context context) {
         this.mContext = context;
@@ -79,6 +80,13 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
                 resolveString(R.string.pref_snooze_interval_key),
                 1);
 
+        this.mBooleanMap = new HashMap<>();
+        putToBooleanMap(
+                PreferenceKey.AUTO_START,
+                resolveString(R.string.pref_auto_start_key),
+                false
+        );
+
     }
 
     @Override
@@ -110,8 +118,20 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
             final Pair<String, Integer> pair = mIntegerMap.get(key);
             return getAppSharedPreferences().getInt(pair.first, pair.second);
         } else {
-            AppLog.w("Invalid long preference requested for key " + key.toString());
+            AppLog.w("Invalid int preference requested for key " + key.toString());
             return Integer.MIN_VALUE;
+        }
+    }
+
+    @Override
+    public Boolean getBoolean(final PreferenceKey key) {
+
+        if (mBooleanMap.containsKey(key)) {
+            final Pair<String, Boolean> pair = mBooleanMap.get(key);
+            return getAppSharedPreferences().getBoolean(pair.first, pair.second);
+        } else {
+            AppLog.w("Invalid boolean preference requested for key " + key.toString());
+            return false;
         }
     }
 
@@ -195,6 +215,10 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
 
     private void putToIntegerMap(final PreferenceKey key, final String stringKey, final int fallbackValue) {
         mIntegerMap.put(key, new Pair<>(stringKey, fallbackValue));
+    }
+
+    private void putToBooleanMap(final PreferenceKey key, final String stringKey, final boolean fallbackValue) {
+        mBooleanMap.put(key, new Pair<>(stringKey, fallbackValue));
     }
 
     private SharedPreferences.Editor getEditor() {

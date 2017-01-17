@@ -14,12 +14,12 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SwitchCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
@@ -28,6 +28,7 @@ import com.michaelfotiadis.deskalarm.services.step.StepService;
 import com.michaelfotiadis.deskalarm.ui.activities.settings.SettingsActivity;
 import com.michaelfotiadis.deskalarm.ui.base.activity.BaseActivity;
 import com.michaelfotiadis.deskalarm.ui.base.core.AlarmManager.ALARM_MODE;
+import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.viewpager.SmartFragmentPagerAdapter;
 import com.michaelfotiadis.deskalarm.ui.base.viewpager.SmartFragmentPagerBinder;
 import com.michaelfotiadis.deskalarm.ui.base.viewpager.SmartFragmentPagerPages;
@@ -48,7 +49,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     @BindView(R.id.tabs)
     protected TabLayout mTabLayout;
 
-    private Switch mSwitchButton;
+    private SwitchCompat mSwitchButton;
 
     private SmartFragmentPagerAdapter mPagerAdapter;
 
@@ -80,7 +81,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
                 mIsShowingDialog = intentBundle.getBoolean(Payloads.PAYLOAD_1.getString());
             }
         }
-        AppLog.d("onCreate finished");
+
     }
 
     private void setUpViewPager() {
@@ -91,7 +92,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         mPager.setAdapter(mPagerAdapter);
         mPager.setOffscreenPageLimit(OFF_PAGE_LIMIT);
 
-        SmartFragmentPagerBinder binder = new SmartFragmentPagerBinder(mPager, pages, mTabLayout,
+        final SmartFragmentPagerBinder binder = new SmartFragmentPagerBinder(mPager, pages, mTabLayout,
                 new SmartFragmentPagerBinder.NavBarTitleNeedsChangingListener() {
                     @Override
                     public void onNavBarTitleNeedsChanging(final CharSequence newTitle) {
@@ -121,20 +122,31 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     public boolean onPrepareOptionsMenu(final Menu menu) {
         // Set up the Switch Button
         final MenuItem switchMenuItem = menu.getItem(0);
-        mSwitchButton = (Switch) switchMenuItem.getActionView().findViewById(R.id.switchForActionBar);
+        mSwitchButton = (SwitchCompat) switchMenuItem.getActionView().findViewById(R.id.switchForActionBar);
         mSwitchButton.setChecked(StepService.isServiceRunning());
         mSwitchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                AppLog.d("Switch Toggled");
-                if (isChecked) {
-                    getServiceManager().startStepService();
+            public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+                AppLog.d("Switch Toggled " + isChecked);
+                if (isChecked && !StepService.isServiceRunning()) {
+                    startService();
                 } else {
+                    // Stop the scanning service
                     getServiceManager().stopStepService();
+                    // cancel the notification, just in case
+                    getNotificationManager().cancelAlarmNotification();
                 }
             }
         });
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void startService() {
+        AppLog.d("Starting service");
+        getServiceManager().startStepService();
+        if (mSwitchButton != null && !mSwitchButton.isChecked()) {
+            mSwitchButton.setChecked(true);
+        }
     }
 
     @Override
@@ -152,16 +164,16 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
 
     @Override
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences, final String key) {
-        if (key.equals(getString(R.string.pref_theme_key))) {
+        if (key.equals(getString(R.string.pref_theme_key))
+                || key.equals(getString(R.string.pref_clock_type_key))
+                || key.equals(getString(R.string.pref_font_color_key))
+                || key.equals(getString(R.string.pref_font_key))) {
             // Use this to recreate the main activity with the new theme
             AppLog.d("Theme Changed. Recreating Main Activity");
             recreate();
         } else if (key.equals(getString(R.string.pref_alarm_interval_key))) {
             // Cancel both the service and the alarm if user changes the settings
-            getServiceManager().stopStepService();
-            getAlarmManager().cancelAlarm();
-        } else {
-            recreate();
+            dismissAllProcessesAndHideDialog();
         }
     }
 
@@ -226,13 +238,19 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
 
     @Override
     protected void onResume() {
+        AppLog.d("On Resume");
         registerResponseReceiver();
 
         if (mIsShowingDialog) {
             enableAlarmDialog();
+        } else if (getPreferenceHandler().getBoolean(PreferenceHandler.PreferenceKey.AUTO_START)) {
+            AppLog.d("Triggering auto start");
+            startService();
         }
 
         mIsActivityShown = true;
+
+
         super.onResume();
     }
 
@@ -261,13 +279,13 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         /** Defining an OK button event listener */
         builder.setPositiveButton("Dismiss", new OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(final DialogInterface dialog, final int which) {
                 dismissAllProcessesAndHideDialog();
             }
         });
         builder.setNegativeButton("Snooze", new OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(final DialogInterface dialog, final int which) {
                 // cancel the notification, just in case
                 getNotificationManager().cancelAlarmNotification();
 
@@ -280,7 +298,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         });
         builder.setNeutralButton("Repeat", new OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(final DialogInterface dialog, final int which) {
                 // cancel the notification, just in case
                 getNotificationManager().cancelAlarmNotification();
                 // TODO there is something wrong here
@@ -299,7 +317,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
      * Dismisses the Alarm, stops the StepService and dismisses the dialog
      */
     private void dismissAllProcessesAndHideDialog() {
-
+        AppLog.d("Stopping service");
         // Stop the scanning service
         getServiceManager().stopStepService();
         // cancel the notification, just in case
@@ -311,7 +329,9 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
             mDialog.dismiss();
             mDialog = null;
         }
-        mSwitchButton.setChecked(false);
+        if (mSwitchButton.isChecked()) {
+            mSwitchButton.setChecked(false);
+        }
     }
 
     /**
