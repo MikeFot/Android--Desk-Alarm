@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.michaelfotiadis.deskalarm.constants.DataStorage;
-import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
+import com.michaelfotiadis.deskalarm.containers.TimeModel;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
@@ -38,17 +38,17 @@ public class DataManagerImpl implements DataManager {
     /**
      * Retrieve in memory data but only for the current day
      *
-     * @return Sorted map String-TimeModelInstance
+     * @return Sorted map String-TimeModel
      */
     @Override
     @SuppressWarnings("MethodMayBeStatic")
-    public SortedMap<String, TimeModelInstance> retrieveDailyData() {
-        final SortedMap<String, TimeModelInstance> filteredData = new TreeMap<String, TimeModelInstance>();
+    public SortedMap<String, TimeModel> retrieveDailyData() {
+        final SortedMap<String, TimeModel> filteredData = new TreeMap<String, TimeModel>();
         // get the current day
         final int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 
         // iterate through the entry set
-        for (final Entry<String, TimeModelInstance> entry : DataStorage.getInstance().getUsageData().entrySet()) {
+        for (final Entry<String, TimeModel> entry : DataStorage.getInstance().getUsageData().entrySet()) {
             if (entry.getValue().getCalendarLogged().get(Calendar.DAY_OF_MONTH) == day) {
                 filteredData.put(entry.getKey(), entry.getValue());
             }
@@ -69,11 +69,11 @@ public class DataManagerImpl implements DataManager {
      * Stores data
      */
     /*package*/ void storeIdleData() {
-        // get time started from preferences
+        // get time started from prefs
         final long storedTimeStarted = mPreferenceHandler.getLong(PreferenceHandlerImpl.PreferenceKey.TIME_STARTED);
 
         // store data in an object
-        final TimeModelInstance dataInstance = new TimeModelInstance(storedTimeStarted);
+        final TimeModel dataInstance = new TimeModel(storedTimeStarted);
 
         if (storedTimeStarted != 0 && dataInstance.getTimeLogged() >= MINIMUM_INTERVAL) {
             // store the data in minutes (the object is handling the logic)

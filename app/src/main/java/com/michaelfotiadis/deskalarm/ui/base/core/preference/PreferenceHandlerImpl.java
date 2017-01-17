@@ -9,6 +9,7 @@ import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility class for Android application methods
@@ -19,11 +20,11 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
 
     private final Context mContext;
     /**
-     * Map for storing String preferences and their default value
+     * Map for storing String prefs and their default value
      */
-    private final HashMap<PreferenceKey, Pair<String, String>> mStringMap;
-    private final HashMap<PreferenceKey, Pair<String, Long>> mLongMap;
-    private final HashMap<PreferenceKey, Pair<String, Integer>> mIntegerMap;
+    private final Map<PreferenceKey, Pair<String, String>> mStringMap;
+    private final Map<PreferenceKey, Pair<String, Long>> mLongMap;
+    private final Map<PreferenceKey, Pair<String, Integer>> mIntegerMap;
 
     public PreferenceHandlerImpl(final Context context) {
         this.mContext = context;
@@ -171,12 +172,12 @@ public class PreferenceHandlerImpl implements PreferenceHandler {
     }
 
     /**
-     * Returns the default shared preferences object for the given context
+     * Returns the default shared prefs object for the given context
      *
      * @return {@link SharedPreferences}
      */
     private SharedPreferences getAppSharedPreferences() {
-        PreferenceManager.setDefaultValues(mContext, R.xml.preferences, false);
+        PreferenceManager.setDefaultValues(mContext, R.xml.prefs, false);
         return PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 

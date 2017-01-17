@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.RemoteViews.RemoteView;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
+import com.michaelfotiadis.deskalarm.containers.ClockModel;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
@@ -29,7 +29,7 @@ public class FusionClock extends View implements Clock {
 
     private final PreferenceHandler mPreferenceHandler;
     private final Handler mHandler = new Handler();
-    private final ClockModelInstance mClockInstance = new ClockModelInstance();
+    private final ClockModel mClockInstance = new ClockModel();
     private Drawable mHourHand;
     private Drawable mMinuteHand;
     private Drawable mSecondHand;
@@ -40,7 +40,7 @@ public class FusionClock extends View implements Clock {
     private int mDialHeight;
     private boolean mChanged;
     private boolean isClockRunning;
-    // overlay color for color filter - set from preferences
+    // overlay color for color filter - set from prefs
     private int mOverlayColor;
     private int mLighterOverlayColor;
     private int mShiftedOverlayColor;

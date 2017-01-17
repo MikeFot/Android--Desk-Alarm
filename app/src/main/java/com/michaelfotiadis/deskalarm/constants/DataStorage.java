@@ -2,7 +2,7 @@ package com.michaelfotiadis.deskalarm.constants;
 
 import android.content.Context;
 
-import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
+import com.michaelfotiadis.deskalarm.containers.TimeModel;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.text.DateFormat;
@@ -15,12 +15,12 @@ public final class DataStorage {
     private static final Object LOCK = new Object();
     private static volatile DataStorage sInstance;
 
-    // map storing usage data in memory as a String - TimeModelInstance map
-    private LinkedHashMap<String, TimeModelInstance> mUsageData;
+    // map storing usage data in memory as a String - TimeModel map
+    private LinkedHashMap<String, TimeModel> mUsageData;
 
     private DataStorage() {
         // initialise the SortedMap
-        setUsageData(new LinkedHashMap<String, TimeModelInstance>());
+        setUsageData(new LinkedHashMap<String, TimeModel>());
     }
 
     public static synchronized DataStorage getInstance() {
@@ -40,20 +40,20 @@ public final class DataStorage {
         return tf.format(calendar.getTime());
     }
 
-    public LinkedHashMap<String, TimeModelInstance> getUsageData() {
+    public LinkedHashMap<String, TimeModel> getUsageData() {
         return mUsageData;
     }
 
-    private void setUsageData(final LinkedHashMap<String, TimeModelInstance> usageData) {
+    private void setUsageData(final LinkedHashMap<String, TimeModel> usageData) {
         this.mUsageData = usageData;
     }
 
     /**
-     * Adds an TimeModelInstance to the Set
+     * Adds an TimeModel to the Set
      *
-     * @param dataInstance TimeModelInstance
+     * @param dataInstance TimeModel
      */
-    public boolean addToUsageData(final Context context, final TimeModelInstance dataInstance) {
+    public boolean addToUsageData(final Context context, final TimeModel dataInstance) {
         if (getUsageData().containsValue(dataInstance)) {
             // skip this if the object already exists
             return false;

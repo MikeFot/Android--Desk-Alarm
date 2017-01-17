@@ -2,27 +2,27 @@ package com.michaelfotiadis.deskalarm.ui.base.viewpager;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.SparseArray;
 
-import java.util.HashMap;
+/*package*/ class FragmentViewPagerTagManager {
+    private final FragmentManager mFragmentManager;
+    private final SparseArray<String> mFragmentTags = new SparseArray<>();
 
-public class FragmentViewPagerTagManager {
-    final FragmentManager fragmentManager;
-    private final HashMap<Integer, String> fragmentTags = new HashMap<>();
-
-    public FragmentViewPagerTagManager(final FragmentManager fragmentManager) {
-        this.fragmentManager = fragmentManager;
+    FragmentViewPagerTagManager(final FragmentManager fragmentManager) {
+        this.mFragmentManager = fragmentManager;
     }
 
-    public Fragment get(final int position) {
-        return this.fragmentManager.findFragmentByTag(this.fragmentTags.get(position));
+    Fragment get(final int position) {
+        return this.mFragmentManager.findFragmentByTag(this.mFragmentTags.get(position));
     }
 
-    public boolean has(final int position) {
-        return this.fragmentTags.containsKey(position) && this.fragmentManager.findFragmentByTag(this.fragmentTags.get(position)) != null;
+    boolean has(final int position) {
+        return position < this.mFragmentTags.size()
+                && this.mFragmentManager.findFragmentByTag(this.mFragmentTags.get(position)) != null;
     }
 
-    public Fragment itemInstantiated(final int position, final Fragment fragment) {
-        this.fragmentTags.put(position, fragment.getTag());
+    Fragment itemInstantiated(final int position, final Fragment fragment) {
+        this.mFragmentTags.put(position, fragment.getTag());
         return fragment;
     }
 }

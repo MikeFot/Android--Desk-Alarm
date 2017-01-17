@@ -131,7 +131,7 @@
     <string name="pref_category_app_settings_title">Application Preferences</string>
     <!-- Button Preference: Clear Data -->
     <string name="pref_clear_data_key">pref_key_clear_data</string>
-    <string name="pref_clear_data_summary">Deletes all user data and preferences</string>
+    <string name="pref_clear_data_summary">Delete user data and preferences</string>
     <string name="pref_clear_data_title">Clear User Data</string>
     <!-- Screen Preference: App Settings -->
     <string name="pref_screen_app_settings_key">pref_key_app_screen</string>
@@ -139,7 +139,7 @@
     <string name="pref_screen_app_settings_title">Clear Data</string>
     <!-- Button Preference: Clear Preferences -->
     <string name="pref_clear_preferences_key">pref_key_clear_preferences</string>
-    <string name="pref_clear_preferences_summary">Deletes all application related preferences</string>
+    <string name="pref_clear_preferences_summary">Delete preferences only</string>
     <string name="pref_clear_preferences_title">Delete Preferences</string>
     <string name="dialog_delete_preferences">Delete Preferences</string>
     <string name="dialog_delete_preferences_body">Are you sure you want to delete application preferences?</string>
@@ -186,5 +186,6 @@
     <string name="label_no_data_yet">No user data for today!</string>
 
     <string name="text_minutes">minutes</string>
+    <string name="text_minute">minute</string>
 
 </resources>

@@ -100,7 +100,7 @@ public class ClockFragment extends BaseFragment {
 
         registerResponseReceiver();
 
-        // read the clock preferences from the shared preference object
+        // read the clock prefs from the shared preference object
         AppLog.d("Preference is " + mClockPreference);
         mClockPreference = getPreferenceHandler().getString(PreferenceHandlerImpl.PreferenceKey.CLOCK_TYPE);
         // Set clock by preference

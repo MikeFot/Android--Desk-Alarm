@@ -57,6 +57,8 @@ public class ClearDataDialogFragment extends BaseDialogFragment {
     private void clearData() {
         getFileHelper().clearSettingsFile();
         getDataManager().clearUserData();
+        getPreferenceHandler().clearPreferences();
+        getActivity().finish();
     }
 
 }

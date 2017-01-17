@@ -12,7 +12,7 @@ import android.view.View;
 import android.widget.RemoteViews.RemoteView;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
+import com.michaelfotiadis.deskalarm.containers.ClockModel;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.ColorUtils;
@@ -30,7 +30,7 @@ public class AnalogClock extends View implements Clock {
 
     private final PreferenceHandler mPreferenceHandler;
     private final Handler mHandler = new Handler();
-    private final ClockModelInstance mClockInstance = new ClockModelInstance();
+    private final ClockModel mClockInstance = new ClockModel();
     // drawable fields
     private Drawable mHourHand;
     private Drawable mMinuteHand;

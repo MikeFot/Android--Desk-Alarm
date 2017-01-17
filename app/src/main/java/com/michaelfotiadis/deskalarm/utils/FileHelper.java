@@ -3,7 +3,7 @@ package com.michaelfotiadis.deskalarm.utils;
 import android.content.Context;
 
 import com.michaelfotiadis.deskalarm.constants.DataStorage;
-import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
+import com.michaelfotiadis.deskalarm.containers.TimeModel;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
 import java.io.BufferedReader;
@@ -109,8 +109,8 @@ public class FileHelper {
                     final int timeElapsed = PrimitiveConversions.tryInteger(dataLine[1], 0);
 
                     if (timeLogged > 0 && timeElapsed > 0) {
-                        // create a new TimeModelInstance
-                        final TimeModelInstance dataInstance = new TimeModelInstance(
+                        // create a new TimeModel
+                        final TimeModel dataInstance = new TimeModel(
                                 timeLogged, timeElapsed);
                         // add to memory
                         DataStorage.getInstance().addToUsageData(mContext.getApplicationContext(),

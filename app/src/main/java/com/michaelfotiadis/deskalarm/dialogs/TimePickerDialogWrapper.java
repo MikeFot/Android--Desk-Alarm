@@ -17,12 +17,11 @@ import com.michaelfotiadis.deskalarm.utils.log.AppLog;
  *
  * @author Michael Fotiadis
  */
-public class TimePickerDialogWrapper {
+public final class TimePickerDialogWrapper {
 
     private static final int MAX_TIME = 120;
 
     private final AlertDialog mDialog;
-    private final int mOriginalSetting;
     private final PreferenceHandler mPreferenceHandler;
     private final PreferenceHandler.PreferenceKey mKey;
 
@@ -45,15 +44,15 @@ public class TimePickerDialogWrapper {
 
         final int preferencesTime = mPreferenceHandler.getInt(mKey);
 
+        final int originalSetting;
 
         if (preferencesTime > MAX_TIME) {
-            mOriginalSetting = MAX_TIME;
+            originalSetting = MAX_TIME;
         } else {
-            mOriginalSetting = preferencesTime;
+            originalSetting = preferencesTime;
         }
 
-        final int hour = mOriginalSetting / 60;
-        int minute = mOriginalSetting % 60;
+        int minute = originalSetting % 60;
 
         // sanitise display
         if (minute <= 0) {
@@ -67,7 +66,7 @@ public class TimePickerDialogWrapper {
 
 
         // get a 24 hour time picker
-        mDialog = initNumberPicker(activity, mOriginalSetting, MAX_TIME);
+        mDialog = initNumberPicker(activity, minute, MAX_TIME);
 
     }
 
@@ -104,12 +103,14 @@ public class TimePickerDialogWrapper {
         }
         alertDialogBuilder.setTitle(title);
         alertDialogBuilder.setView(linearLayout);
+        //noinspection AnonymousInnerClassMayBeStatic
         alertDialogBuilder
                 .setCancelable(true)
                 .setPositiveButton("Ok",
                         new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, final int id) {
                                 onTimeSet(numberPicker.getValue());
+                                dialog.dismiss();
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -127,6 +128,7 @@ public class TimePickerDialogWrapper {
         mDialog.show();
     }
 
+    @SuppressWarnings("unused")
     public void dismiss() {
         mDialog.dismiss();
     }
@@ -134,18 +136,15 @@ public class TimePickerDialogWrapper {
     private void onTimeSet(final int minutes) {
         int timeToAlarm = minutes;
 
-        AppLog.d("Time to alarm= " + timeToAlarm);
-
-        if (timeToAlarm == mOriginalSetting) {
-            mDialog.dismiss();
-            return;
-        }
-
         // sanitise time
         if (timeToAlarm <= 0) {
             timeToAlarm = 1;
         }
+
+        AppLog.d("Time set= " + timeToAlarm);
+
         mPreferenceHandler.writeInt(mKey, timeToAlarm);
+
     }
 
 }

@@ -51,7 +51,6 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     private Switch mSwitchButton;
 
     private SmartFragmentPagerAdapter mPagerAdapter;
-    private SmartFragmentPagerBinder mBinder;
 
     private Dialog mDialog;
     private boolean mIsShowingDialog = false;
@@ -92,7 +91,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
         mPager.setAdapter(mPagerAdapter);
         mPager.setOffscreenPageLimit(OFF_PAGE_LIMIT);
 
-        mBinder = new SmartFragmentPagerBinder(mPager, pages, mTabLayout,
+        SmartFragmentPagerBinder binder = new SmartFragmentPagerBinder(mPager, pages, mTabLayout,
                 new SmartFragmentPagerBinder.NavBarTitleNeedsChangingListener() {
                     @Override
                     public void onNavBarTitleNeedsChanging(final CharSequence newTitle) {
@@ -100,10 +99,10 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
                     }
                 });
 
-        mBinder.bind();
+        binder.bind();
         mPager.setCurrentItem(0);
         // The onPageSelectedEvent of OnPageChangeListener is not called for the first page
-        mBinder.onPageSelected(0);
+        binder.onPageSelected(0);
 
     }
 
@@ -142,7 +141,7 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     public boolean onOptionsItemSelected(final MenuItem item) {
         final int id = item.getItemId();
         if (id == R.id.menu_settings) {
-            // start the shared preferences activity
+            // start the shared prefs activity
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
         } else {
@@ -161,6 +160,8 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
             // Cancel both the service and the alarm if user changes the settings
             getServiceManager().stopStepService();
             getAlarmManager().cancelAlarm();
+        } else {
+            recreate();
         }
     }
 

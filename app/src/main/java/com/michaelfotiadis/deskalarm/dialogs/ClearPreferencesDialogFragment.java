@@ -38,6 +38,7 @@ public class ClearPreferencesDialogFragment extends BaseDialogFragment {
                     @Override
                     public void onClick(final DialogInterface dialog, final int which) {
                         getPreferenceHandler().clearPreferences();
+                        getActivity().finish();
                     }
                 },
                 R.string.cancel, null);

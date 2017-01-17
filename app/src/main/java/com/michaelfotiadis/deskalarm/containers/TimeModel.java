@@ -13,24 +13,24 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Michael Fotiadis
  */
-public class TimeModelInstance {
+public class TimeModel {
     private final long mTimeElapsed;
     private final Calendar mCalendarLogged;
 
-    public TimeModelInstance(final long timeStarted) {
+    public TimeModel(final long timeStarted) {
         final Long currentTime = Calendar.getInstance().getTimeInMillis();
         mCalendarLogged = Calendar.getInstance();
         mTimeElapsed = TimeUnit.MILLISECONDS.toMinutes(currentTime - timeStarted);
     }
 
-    public TimeModelInstance(final long timeLogged, final long timeElapsed) {
+    public TimeModel(final long timeLogged, final long timeElapsed) {
 
         mCalendarLogged = Calendar.getInstance();
         mCalendarLogged.setTimeInMillis(timeLogged);
         mTimeElapsed = (int) timeElapsed;
     }
 
-    public TimeModelInstance(final int timeElapsed, final Calendar calendarLogged) {
+    public TimeModel(final int timeElapsed, final Calendar calendarLogged) {
         mTimeElapsed = timeElapsed;
         mCalendarLogged = calendarLogged;
     }

@@ -8,12 +8,12 @@
             android:dependency="@string/pref_category_notifications_key"
             android:key="@string/pref_alarm_interval_key"
             android:summary="@string/pref_alarm_interval_summary"
-            android:title="@string/pref_alarm_interval_title"/>
+            android:title="@string/pref_alarm_interval_title" />
         <Preference
             android:dependency="@string/pref_category_notifications_key"
             android:key="@string/pref_snooze_interval_key"
             android:summary="@string/pref_snooze_interval_summary"
-            android:title="@string/pref_snooze_interval_title"/>
+            android:title="@string/pref_snooze_interval_title" />
         <ListPreference
             android:defaultValue="@string/pref_ringtones_default"
             android:dependency="@string/pref_category_notifications_key"
@@ -22,53 +22,38 @@
             android:entryValues="@array/array_ringtone_values"
             android:key="@string/pref_ringtones_key"
             android:summary="%s"
-            android:title="@string/pref_ringtones_title"/>
+            android:title="@string/pref_ringtones_title" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="@string/pref_category_theme_key"
         android:title="@string/pref_category_theme_title">
-        <PreferenceScreen
-            android:dependency="@string/pref_category_theme_key"
-            android:key="@string/pref_screen_clock_appearance_key"
-            android:summary="@string/pref_clock_appearance_summary"
-            android:title="@string/pref_clock_appearance_title">
             <ListPreference
                 android:defaultValue="@string/pref_clock_type_default"
-                android:dependency="@string/pref_screen_clock_appearance_key"
+                android:dependency="@string/pref_category_theme_key"
                 android:dialogTitle="@string/pref_clock_type_list_title"
                 android:entries="@array/array_clock_types"
                 android:entryValues="@array/array_clock_types"
                 android:key="@string/pref_clock_type_key"
                 android:summary="%s"
-                android:title="@string/pref_clock_type_title"/>
+                android:title="@string/pref_clock_type_title" />
             <ListPreference
                 android:defaultValue="@string/pref_font_color_default_value"
-                android:dependency="@string/pref_screen_clock_appearance_key"
+                android:dependency="@string/pref_category_theme_key"
                 android:dialogTitle="@string/pref_font_color_dialog_title"
                 android:entries="@array/array_color_font_names"
                 android:entryValues="@array/array_color_font_values"
                 android:key="@string/pref_font_color_key"
                 android:summary="%s"
-                android:title="@string/pref_font_color_title"/>
+                android:title="@string/pref_font_color_title" />
             <ListPreference
                 android:defaultValue="@string/pref_font_default_value"
-                android:dependency="@string/pref_screen_clock_appearance_key"
+                android:dependency="@string/pref_category_theme_key"
                 android:dialogTitle="@string/pref_font_dialog_title"
                 android:entries="@array/array_fonts"
                 android:entryValues="@array/array_fonts_values"
                 android:key="@string/pref_font_key"
                 android:summary="%s"
-                android:title="@string/pref_font_title"/>
-        </PreferenceScreen>
-
-        <ListPreference
-            android:defaultValue="@string/pref_theme_default"
-            android:dialogTitle="@string/pref_theme_list_title"
-            android:entries="@array/array_theme"
-            android:entryValues="@array/array_theme"
-            android:key="@string/pref_theme_key"
-            android:summary="@string/pref_theme_summary"
-            android:title="@string/pref_theme_title"/>
+                android:title="@string/pref_font_title" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="@string/pref_category_sensor_key"
@@ -81,24 +66,19 @@
             android:entryValues="@array/array_sensor_modes"
             android:key="@string/pref_sensor_modes_key"
             android:summary="@string/pref_sensor_modes_summary"
-            android:title="@string/pref_sensor_modes_title"/>
+            android:title="@string/pref_sensor_modes_title" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="@string/pref_category_app_settings_key"
         android:title="@string/pref_category_app_settings_title">
-        <PreferenceScreen
-            android:key="@string/pref_screen_app_settings_key"
-            android:summary="@string/pref_screen_app_settings_summary"
-            android:title="@string/pref_screen_app_settings_title">
-            <Preference
-                android:key="@string/pref_clear_data_key"
-                android:summary="@string/pref_clear_data_summary"
-                android:title="@string/pref_clear_data_title"/>
-            <Preference
-                android:key="@string/pref_clear_preferences_key"
-                android:summary="@string/pref_clear_preferences_summary"
-                android:title="@string/pref_clear_preferences_title"/>
-        </PreferenceScreen>
+        <Preference
+            android:key="@string/pref_clear_data_key"
+            android:summary="@string/pref_clear_data_summary"
+            android:title="@string/pref_clear_data_title" />
+        <Preference
+            android:key="@string/pref_clear_preferences_key"
+            android:summary="@string/pref_clear_preferences_summary"
+            android:title="@string/pref_clear_preferences_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

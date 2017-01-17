@@ -7,40 +7,40 @@ import android.view.ViewGroup;
 
 public class SmartFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private final FragmentManager fragmentManager;
-    private final FragmentViewPagerTagManager fragmentViewPagerTagManager;
-    private FragmentAttachedListener fragmentAttachedListener;
-    private Fragment[] fragments = {};
-    private CharSequence[] titles = {};
+    private final FragmentManager mFragmentManager;
+    private final FragmentViewPagerTagManager mFragmentViewPagerTagManager;
+    private FragmentAttachedListener mFragmentAttachedListener;
+    private Fragment[] mFragments = {};
+    private CharSequence[] mTitles = {};
 
     public SmartFragmentPagerAdapter(final FragmentManager fragmentManager) {
         super(fragmentManager);
-        this.fragmentViewPagerTagManager = new FragmentViewPagerTagManager(fragmentManager);
-        this.fragmentManager = fragmentManager;
+        this.mFragmentViewPagerTagManager = new FragmentViewPagerTagManager(fragmentManager);
+        this.mFragmentManager = fragmentManager;
     }
 
     public void clear() {
-        for (final Fragment fragment : fragments) {
-            fragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss();
+        for (final Fragment fragment : mFragments) {
+            mFragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss();
         }
     }
 
     @Override
     public int getCount() {
-        return fragments.length;
+        return mFragments.length;
     }
 
     @Override
     public Fragment getItem(final int position) {
         final Fragment result;
-        if (fragmentViewPagerTagManager.has(position)) {
-            result = fragmentViewPagerTagManager.get(position);
+        if (mFragmentViewPagerTagManager.has(position)) {
+            result = mFragmentViewPagerTagManager.get(position);
         } else {
-            result = fragments[position];
+            result = mFragments[position];
         }
 
-        if (fragmentAttachedListener != null) {
-            fragmentAttachedListener.onFragmentAttached(position, result);
+        if (mFragmentAttachedListener != null) {
+            mFragmentAttachedListener.onFragmentAttached(position, result);
         }
 
         return result;
@@ -48,17 +48,17 @@ public class SmartFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(final int position) {
-        return titles[position];
+        return mTitles[position];
     }
 
     @Override
     public Object instantiateItem(final ViewGroup container, final int position) {
-        return fragmentViewPagerTagManager.itemInstantiated(position,
+        return mFragmentViewPagerTagManager.itemInstantiated(position,
                 (Fragment) super.instantiateItem(container, position));
     }
 
     public void setFragmentAttachedListener(final FragmentAttachedListener fragmentAttachedListener) {
-        this.fragmentAttachedListener = fragmentAttachedListener;
+        this.mFragmentAttachedListener = fragmentAttachedListener;
     }
 
     public void setFragments(final Fragment[] fragments, final CharSequence[] titles) {
@@ -66,8 +66,8 @@ public class SmartFragmentPagerAdapter extends FragmentPagerAdapter {
             throw new IllegalArgumentException("The fragments and titles arrays must have the same length");
         }
 
-        this.fragments = fragments;
-        this.titles = titles;
+        this.mFragments = fragments;
+        this.mTitles = titles;
     }
 
     public void setFragments(final SmartFragmentPagerPages pages) {

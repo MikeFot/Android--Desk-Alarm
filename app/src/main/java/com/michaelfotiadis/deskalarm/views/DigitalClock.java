@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.containers.ClockModelInstance;
+import com.michaelfotiadis.deskalarm.containers.ClockModel;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
 import com.michaelfotiadis.deskalarm.utils.PrimitiveConversions;
@@ -24,7 +24,7 @@ public class DigitalClock extends TextView implements Clock {
     private final Handler mHandler = new Handler();
     private final PreferenceHandler mPreferenceHandler;
     private long mStartTime = 0;
-    private final ClockModelInstance mClockInstance;
+    private final ClockModel mClockInstance;
     private long mTimeRunning;
     private final Runnable mRunnable = new Runnable() {
         @Override
@@ -36,14 +36,14 @@ public class DigitalClock extends TextView implements Clock {
 
     public DigitalClock(final Context context) {
         super(context);
-        mClockInstance = new ClockModelInstance();
+        mClockInstance = new ClockModel();
         mPreferenceHandler = new PreferenceHandlerImpl(context);
         init();
     }
 
     public DigitalClock(final Context context, final AttributeSet attrs) {
         super(context, attrs);
-        mClockInstance = new ClockModelInstance();
+        mClockInstance = new ClockModel();
         mPreferenceHandler = new PreferenceHandlerImpl(context);
         init();
 
@@ -52,7 +52,7 @@ public class DigitalClock extends TextView implements Clock {
 
     public DigitalClock(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
-        mClockInstance = new ClockModelInstance();
+        mClockInstance = new ClockModel();
         mPreferenceHandler = new PreferenceHandlerImpl(context);
         init();
     }

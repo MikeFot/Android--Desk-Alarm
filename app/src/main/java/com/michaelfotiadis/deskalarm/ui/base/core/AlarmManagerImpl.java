@@ -112,7 +112,7 @@ public final class AlarmManagerImpl implements AlarmManager {
     }
 
     /**
-     * Save time started to shared preferences and schedule alarm if it is greater than 0
+     * Save time started to shared prefs and schedule alarm if it is greater than 0
      *
      * @param timeStarted
      */

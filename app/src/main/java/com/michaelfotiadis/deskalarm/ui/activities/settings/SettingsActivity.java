@@ -82,7 +82,7 @@ public class SettingsActivity extends BaseActivity implements OnSharedPreference
 
     @Override
     protected void onResume() {
-        // register a shared preferences listener
+        // register a shared prefs listener
         getPreferenceHandler().registerOnSharedPreferenceChangeListener(this);
         super.onResume();
     }

@@ -129,7 +129,7 @@ public class ToastHelper {
                         Style.purple().color);
                 break;
             case REPEAT:
-                // get the stored value from shared preferences
+                // get the stored value from shared prefs
                 final int alarmDuration = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.ALARM_INTERVAL);
                 // make a card toast
                 makeInfoToast(String.format(
@@ -138,7 +138,7 @@ public class ToastHelper {
                         Style.green().color);
                 break;
             case SNOOZE:
-                // get the stored value from shared preferences
+                // get the stored value from shared prefs
                 final int snoozeDuration = mPreferenceHandler.getInt(PreferenceHandlerImpl.PreferenceKey.SNOOZE_INTERVAL);
                 // make a card toast
                 mSuperActivityToast = makeInfoToast(

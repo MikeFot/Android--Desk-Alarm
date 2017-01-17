@@ -7,7 +7,7 @@ import com.michaelfotiadis.deskalarm.services.AudioService;
 import com.michaelfotiadis.deskalarm.services.step.StepService;
 import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
-public class ServiceManagerImpl implements ServiceManager {
+/*package*/ class ServiceManagerImpl implements ServiceManager {
 
     private final Context mContext;
 

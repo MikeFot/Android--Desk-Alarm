@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.michaelfotiadis.deskalarm.R;
 import com.michaelfotiadis.deskalarm.notification.ActivityNotificationController;
-import com.michaelfotiadis.deskalarm.notification.SnackbarNotificationController;
+import com.michaelfotiadis.deskalarm.notification.SnackBarNotificationController;
 import com.michaelfotiadis.deskalarm.ui.base.core.AlarmManager;
 import com.michaelfotiadis.deskalarm.ui.base.core.Core;
 import com.michaelfotiadis.deskalarm.ui.base.core.CoreProvider;
@@ -41,7 +41,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Core {
 
             final CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
             if (coordinatorLayout != null) {
-                mNotificationController = new SnackbarNotificationController(this);
+                mNotificationController = new SnackBarNotificationController(this);
             }
 
         }

@@ -88,13 +88,13 @@ public class NotificationManagerImpl implements NotificationManager {
             builder.setPriority(Notification.PRIORITY_HIGH);
         }
 
-        // retrieve the notification type from the shared preferences object
+        // retrieve the notification type from the shared prefs object
         final String notificationPreference = mPreferenceHandler.getString(PreferenceHandlerImpl.PreferenceKey.RINGTONE);
 
         if (notificationPreference.length() < 1) {
             builder.setDefaults(Notification.DEFAULT_ALL);
         } else {
-            // handle the shared preferences
+            // handle the shared prefs
             builder.setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE);
             final int resID = mContext.getResources().getIdentifier(notificationPreference, "raw", mContext.getPackageName());
             AppLog.i("RESOURCE " + resID);

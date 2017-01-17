@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
@@ -17,12 +18,12 @@ import com.michaelfotiadis.deskalarm.dialogs.TimePickerDialogWrapper;
 import com.michaelfotiadis.deskalarm.ui.base.activity.BaseActivity;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
-import com.michaelfotiadis.deskalarm.ui.base.dialog.BaseDialogFragment;
+import com.michaelfotiadis.deskalarm.utils.log.AppLog;
 
-public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, OnSharedPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragmentCompat
+        implements Preference.OnPreferenceClickListener,
+        OnSharedPreferenceChangeListener {
 
-    private static final String TAG_TTA_PICKER = "TimeToAlarmPickerDialog";
-    private static final String TAG_TTS_PICKER = "TimeToSnoozePickerDialog";
     private static final String TAG_CLEAR_DATA_DIALOG = "ClearDataDialog";
     private static final String TAG_CLEAR_PREF_DIALOG = "ClearPreferencesDialog";
     private Preference mTimeToAlarmSetButton;
@@ -32,51 +33,71 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
     @Override
     public void onCreatePreferences(final Bundle savedInstanceState, final String rootKey) {
-        addPreferencesFromResource(R.xml.preferences);
 
-        mTimeToAlarmSetButton = findPreference(getActivity().getString(R.string.pref_alarm_interval_key));
-        mTimeToAlarmSetButton.setOnPreferenceClickListener(this);
+        AppLog.d("onCreatePreferences " + rootKey);
+        setPreferencesFromResource(R.xml.prefs, rootKey);
 
-        mTimeToSnoozeSetButton = findPreference(getActivity().getString(R.string.pref_snooze_interval_key));
-        mTimeToSnoozeSetButton.setOnPreferenceClickListener(this);
+        setUpListeners();
 
-        mClearDataButton = findPreference(getActivity().getString(R.string.pref_clear_data_key));
-        mClearDataButton.setOnPreferenceClickListener(this);
-
-        mClearPreferenceButton = findPreference(getActivity().getString(R.string.pref_clear_preferences_key));
-        mClearPreferenceButton.setOnPreferenceClickListener(this);
-
-        // remove accelerometer preferences if version less than KITKAT
+        // remove accelerometer prefs if version less than KITKAT
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             final PreferenceCategory category = (PreferenceCategory) findPreference(getString(R.string.pref_category_sensor_key));
             getPreferenceScreen().removePreference(category);
+        }
+
+    }
+
+    private void setUpListeners() {
+        mTimeToAlarmSetButton = findPreference(getString(R.string.pref_alarm_interval_key));
+        if (mTimeToAlarmSetButton != null) {
+            mTimeToAlarmSetButton.setOnPreferenceClickListener(this);
+        }
+
+        mTimeToSnoozeSetButton = findPreference(getString(R.string.pref_snooze_interval_key));
+        if (mTimeToSnoozeSetButton != null) {
+            mTimeToSnoozeSetButton.setOnPreferenceClickListener(this);
+        }
+
+        mClearDataButton = findPreference(getString(R.string.pref_clear_data_key));
+        if (mClearDataButton != null) {
+            mClearDataButton.setOnPreferenceClickListener(this);
+        }
+
+        mClearPreferenceButton = findPreference(getString(R.string.pref_clear_preferences_key));
+        if (mClearPreferenceButton != null) {
+            mClearPreferenceButton.setOnPreferenceClickListener(this);
         }
     }
 
     @Override
     public boolean onPreferenceClick(final Preference preference) {
 
-        if (preference.hashCode() == mTimeToAlarmSetButton.hashCode()) {
+        AppLog.d("Clicked on preference: " + preference.getKey());
+
+        if (mTimeToAlarmSetButton != null && preference.hashCode() == mTimeToAlarmSetButton.hashCode()) {
             showSetAlarmNumberPickerDialog();
             return true;
-        } else if (preference.hashCode() == mTimeToSnoozeSetButton.hashCode()) {
+        } else if (mTimeToSnoozeSetButton != null && preference.hashCode() == mTimeToSnoozeSetButton.hashCode()) {
             showSetSnoozeNumberPickerDialog();
             return true;
-        } else if (preference.hashCode() == mClearDataButton.hashCode()) {
+        } else if (mClearDataButton != null && preference.hashCode() == mClearDataButton.hashCode()) {
             showClearDataDialog();
             return true;
-        } else if (preference.hashCode() == mClearPreferenceButton.hashCode()) {
+        } else if (mClearPreferenceButton != null && preference.hashCode() == mClearPreferenceButton.hashCode()) {
             showClearPreferencesDialog();
             return true;
         }
+
         return false;
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // register a shared preferences listener
+        // register a shared prefs listener
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        refreshPreferencesPreview();
 
     }
 
@@ -99,6 +120,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
     @Override
     public void onSharedPreferenceChanged(final SharedPreferences sharedPreferences,
                                           final String key) {
+
         final Preference preference = findPreference(key);
         if (preference instanceof ListPreference) {
             final ListPreference listPreference = (ListPreference) preference;
@@ -106,42 +128,75 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
             }
-        } else if (key.equals(getActivity().getString(R.string.pref_alarm_interval_key))) {
-            preference.setSummary(
-                    String.format("%s %s",
-                            String.valueOf(getPreferenceHandler().getInt(PreferenceHandler.PreferenceKey.ALARM_INTERVAL)),
-                            getString(R.string.text_minutes)));
+        } else if (key.equals(getString(R.string.pref_alarm_interval_key))) {
+            showMinutesPreview(preference, PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+        } else if (key.equals(getString(R.string.pref_snooze_interval_key))) {
+            showMinutesPreview(preference, PreferenceHandler.PreferenceKey.SNOOZE_INTERVAL);
+        }
+
+    }
+
+    @Override
+    public Fragment getCallbackFragment() {
+        return this;
+    }
+
+    private void refreshPreferencesPreview() {
+        if (mTimeToAlarmSetButton != null) {
+            showMinutesPreview(findPreference(getString(R.string.pref_alarm_interval_key)), PreferenceHandler.PreferenceKey.ALARM_INTERVAL);
+        }
+        if (mTimeToSnoozeSetButton != null) {
+            showMinutesPreview(findPreference(getString(R.string.pref_snooze_interval_key)), PreferenceHandler.PreferenceKey.SNOOZE_INTERVAL);
         }
     }
+
+    private void showMinutesPreview(final Preference preference,
+                                    final PreferenceHandler.PreferenceKey key) {
+
+        final int minutes = getPreferenceHandler().getInt(key);
+        final String suffix;
+        if (minutes == 1) {
+            suffix = getString(R.string.text_minute);
+        } else {
+            suffix = getString(R.string.text_minutes);
+        }
+        preference.setSummary(
+                String.format("%s %s",
+                        String.valueOf(minutes),
+                        suffix));
+    }
+
 
     /**
      * Starts a confirmation dialog for clearing user data
      */
     private void showClearPreferencesDialog() {
-        final BaseDialogFragment dialog = ClearPreferencesDialogFragment.newInstance();
-        dialog.show(getActivity().getSupportFragmentManager(), TAG_CLEAR_PREF_DIALOG);
+        ClearPreferencesDialogFragment.newInstance().show(getActivity().getSupportFragmentManager(), TAG_CLEAR_PREF_DIALOG);
     }
 
     /**
      * Starts a confirmation dialog for clearing user data
      */
     private void showClearDataDialog() {
-        final BaseDialogFragment generatedFragment = ClearDataDialogFragment.newInstance();
-        generatedFragment.show(getActivity().getSupportFragmentManager(), TAG_CLEAR_DATA_DIALOG);
+        ClearDataDialogFragment.newInstance().show(getActivity().getSupportFragmentManager(), TAG_CLEAR_DATA_DIALOG);
     }
 
     /**
      * Starts a number picker dialog for Snooze
      */
     private void showSetSnoozeNumberPickerDialog() {
-        TimePickerDialogWrapper.newSnoozeInstance(getActivity(), getPreferenceHandler()).show();
+        TimePickerDialogWrapper.newSnoozeInstance(
+                getActivity(),
+                getPreferenceHandler()).show();
     }
 
     /**
      * Starts a number picker dialog for Time to Alarm
      */
     private void showSetAlarmNumberPickerDialog() {
-        TimePickerDialogWrapper.newAlarmInstance(getActivity(), getPreferenceHandler()).show();
+        TimePickerDialogWrapper.newAlarmInstance(
+                getActivity(),
+                getPreferenceHandler()).show();
     }
 
     private PreferenceHandler getPreferenceHandler() {

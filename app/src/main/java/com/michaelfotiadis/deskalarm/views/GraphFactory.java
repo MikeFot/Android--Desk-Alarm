@@ -8,7 +8,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 import com.michaelfotiadis.deskalarm.R;
-import com.michaelfotiadis.deskalarm.containers.TimeModelInstance;
+import com.michaelfotiadis.deskalarm.containers.TimeModel;
 import com.michaelfotiadis.deskalarm.ui.base.core.DataManager;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandler;
 import com.michaelfotiadis.deskalarm.ui.base.core.preference.PreferenceHandlerImpl;
@@ -148,11 +148,11 @@ public class GraphFactory {
         long maxY = Long.MIN_VALUE;
         final XYSeries series = new XYSeries(context.getString(R.string.graph_title));
         // get the data from the data manager
-        final SortedMap<String, TimeModelInstance> data = dataManager.retrieveDailyData();
+        final SortedMap<String, TimeModel> data = dataManager.retrieveDailyData();
         int i = 0;
         if (data != null) {
             // iterate through the entry set
-            for (final Entry<String, TimeModelInstance> entry : data.entrySet()) {
+            for (final Entry<String, TimeModel> entry : data.entrySet()) {
                 final String x = entry.getKey();
                 final double y = entry.getValue().getTimeLogged();
 

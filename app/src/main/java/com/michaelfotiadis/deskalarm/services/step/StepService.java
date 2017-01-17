@@ -156,7 +156,7 @@ public class StepService extends IntentService implements SensorEventListener {
     }
 
     /**
-     * Reads shared preferences and assigns the Service Flag
+     * Reads shared prefs and assigns the Service Flag
      */
     private void assignServiceFlags() {
         final String mode = mCore.getPreferenceHandler().getString(PreferenceHandlerImpl.PreferenceKey.SENSOR_MODE);
@@ -314,7 +314,7 @@ public class StepService extends IntentService implements SensorEventListener {
     }
 
     /**
-     * Method for unregistering the screen receiver
+     * Method for un-registering the screen receiver
      */
     private void unregisterScreenReceiver() {
         if (mReceiver == null) {
