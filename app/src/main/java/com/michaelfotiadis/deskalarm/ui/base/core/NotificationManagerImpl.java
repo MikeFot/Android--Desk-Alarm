@@ -67,7 +67,6 @@ public class NotificationManagerImpl implements NotificationManager {
         final String notificationTitle = mContext.getString(R.string.app_name);
         final String notificationBody = mContext.getString(R.string.dialog_alarm_body);
 
-
         final Intent resultIntent = new Intent(mContext, MainActivity.class);
 
         // add a boolean to trigger the alert dialog once the activity is opened

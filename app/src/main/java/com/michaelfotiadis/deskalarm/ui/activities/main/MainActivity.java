@@ -82,6 +82,8 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
             }
         }
 
+        registerResponseReceiver();
+
     }
 
     private void setUpViewPager() {
@@ -239,7 +241,6 @@ public class MainActivity extends BaseActivity implements OnSharedPreferenceChan
     @Override
     protected void onResume() {
         AppLog.d("On Resume");
-        registerResponseReceiver();
 
         if (mIsShowingDialog) {
             enableAlarmDialog();
