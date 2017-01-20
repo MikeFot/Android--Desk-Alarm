@@ -3,6 +3,7 @@ package com.michaelfotiadis.deskalarm.ui.base.core;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.michaelfotiadis.deskalarm.constants.AppConstants;
 import com.michaelfotiadis.deskalarm.model.Broadcasts;
@@ -78,7 +79,12 @@ public final class AlarmManagerImpl implements AlarmManager {
             final Intent intent = new Intent(mContext, AlarmService.class);
             intent.putExtra(Payloads.ALARM_PAYLOAD.getString(), Requests.REQUEST_CODE_1.getCode());
             final PendingIntent operation = PendingIntent.getService(mContext, 0, intent, 0);
-            mAlarmManager.set(android.app.AlarmManager.RTC_WAKEUP, targetTime, operation);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mAlarmManager.setExact(android.app.AlarmManager.RTC_WAKEUP, targetTime, operation);
+            } else {
+                mAlarmManager.set(android.app.AlarmManager.RTC_WAKEUP, targetTime, operation);
+            }
 
             // send a broadcast
             broadcastAlarmMode(mode);
