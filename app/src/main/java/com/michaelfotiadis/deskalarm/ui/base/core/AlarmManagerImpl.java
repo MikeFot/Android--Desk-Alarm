@@ -74,10 +74,10 @@ public final class AlarmManagerImpl implements AlarmManager {
                     PrimitiveConversions.getDate(System.currentTimeMillis(), AppConstants.SIMPLE_DATE_FORMAT_STRING)));
             AppLog.d(String.format("Alarm time: %s",
                     PrimitiveConversions.getDate(targetTime, AppConstants.SIMPLE_DATE_FORMAT_STRING)));
-            //***
 
             final Intent intent = new Intent(mContext, AlarmService.class);
             intent.putExtra(Payloads.ALARM_PAYLOAD.getString(), Requests.REQUEST_CODE_1.getCode());
+
             final PendingIntent operation = PendingIntent.getService(mContext, 0, intent, 0);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
